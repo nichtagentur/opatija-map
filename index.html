@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Opatija Riviera Guide</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ocean:#1a6b8a;--ocean-deep:#0e4a5e;--ocean-light:#e8f4f8;
+  --terra:#c4623a;--terra-light:#f5e6df;
+  --sand:#f0e5d3;--sand-dark:#d4c4a8;
+  --olive:#5a7247;--olive-light:#e8f0e3;
+  --grape:#7b5ea7;--grape-light:#efe8f8;
+  --white:#fefcf9;--charcoal:#2c2824;--warm-gray:#6b6560;
+  --beach-blue:#2196F3;--restaurant-terra:#E8713A;
+  --hike-green:#4CAF50;--attraction-purple:#9C5EC7;
+  --sidebar-w:380px;
+  --font-display:'Playfair Display',Georgia,serif;
+  --font-body:'DM Sans','Segoe UI',sans-serif;
+}
+html,body{height:100%;font-family:var(--font-body);background:var(--charcoal);color:var(--charcoal);overflow:hidden}
+
+/* ── LAYOUT ── */
+.app{display:flex;height:100vh;width:100vw;position:relative}
+#map{flex:1;height:100%;z-index:1}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:var(--sidebar-w);height:100%;background:var(--white);
+  display:flex;flex-direction:column;z-index:1000;
+  box-shadow:4px 0 30px rgba(0,0,0,.12);
+  transition:transform .4s cubic-bezier(.4,0,.2,1);
+  position:relative;overflow:hidden;
+}
+.sidebar::before{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:120px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 120'%3E%3Cpath fill='%231a6b8a' fill-opacity='.06' d='M0,64L48,58.7C96,53,192,43,288,48C384,53,480,75,576,80C672,85,768,75,864,64C960,53,1056,43,1152,48C1248,53,1344,75,1392,85.3L1440,96L1440,120L0,120Z'/%3E%3C/svg%3E") no-repeat bottom;
+  background-size:cover;pointer-events:none;opacity:.7;
+}
+.sidebar.collapsed{transform:translateX(calc(-1 * var(--sidebar-w)))}
+
+.sidebar-header{
+  padding:28px 24px 20px;
+  background:linear-gradient(135deg,var(--ocean-deep) 0%,var(--ocean) 100%);
+  color:#fff;position:relative;overflow:hidden;flex-shrink:0;
+}
+.sidebar-header::after{
+  content:'';position:absolute;bottom:-20px;left:-20px;right:-20px;height:60px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 60'%3E%3Cpath fill='%23fefcf9' d='M0,30 C360,60 720,0 1080,30 C1260,45 1380,20 1440,30 L1440,60 L0,60Z'/%3E%3C/svg%3E") no-repeat bottom;
+  background-size:cover;
+}
+.sidebar-header h1{
+  font-family:var(--font-display);font-size:1.65rem;font-weight:700;
+  line-height:1.15;letter-spacing:-.01em;margin-bottom:6px;
+}
+.sidebar-header p{
+  font-size:.82rem;opacity:.85;line-height:1.4;font-weight:400;
+}
+.header-deco{
+  position:absolute;top:12px;right:16px;font-size:2.8rem;opacity:.12;
+  font-family:var(--font-display);font-style:italic;
+}
+
+/* ── FILTERS ── */
+.filters{
+  display:flex;gap:6px;padding:16px 18px 12px;flex-wrap:wrap;flex-shrink:0;
+  border-bottom:1px solid rgba(0,0,0,.06);
+}
+.filter-btn{
+  border:none;padding:7px 14px;border-radius:20px;font-size:.76rem;
+  font-family:var(--font-body);font-weight:600;cursor:pointer;
+  transition:all .25s ease;display:flex;align-items:center;gap:5px;
+  background:var(--sand);color:var(--warm-gray);letter-spacing:.02em;
+}
+.filter-btn:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.1)}
+.filter-btn.active{color:#fff;transform:translateY(-1px);box-shadow:0 3px 12px rgba(0,0,0,.2)}
+.filter-btn.active[data-cat="all"]{background:var(--ocean)}
+.filter-btn.active[data-cat="beach"]{background:var(--beach-blue)}
+.filter-btn.active[data-cat="restaurant"]{background:var(--restaurant-terra)}
+.filter-btn.active[data-cat="hiking"]{background:var(--hike-green)}
+.filter-btn.active[data-cat="attraction"]{background:var(--attraction-purple)}
+.filter-count{
+  font-size:.65rem;background:rgba(255,255,255,.3);
+  padding:1px 6px;border-radius:8px;min-width:18px;text-align:center;
+}
+
+/* ── POI LIST ── */
+.poi-list{flex:1;overflow-y:auto;padding:8px 14px 100px;scroll-behavior:smooth}
+.poi-list::-webkit-scrollbar{width:5px}
+.poi-list::-webkit-scrollbar-thumb{background:var(--sand-dark);border-radius:4px}
+
+.poi-card{
+  padding:14px 16px;border-radius:12px;cursor:pointer;
+  transition:all .25s ease;margin-bottom:6px;
+  border:1.5px solid transparent;position:relative;
+  display:flex;align-items:flex-start;gap:12px;
+}
+.poi-card:hover{
+  background:var(--ocean-light);border-color:rgba(26,107,138,.15);
+  transform:translateX(4px);
+}
+.poi-card.active-card{
+  background:var(--ocean-light);border-color:var(--ocean);
+  box-shadow:0 2px 12px rgba(26,107,138,.15);
+}
+.poi-icon{
+  width:38px;height:38px;border-radius:10px;display:flex;
+  align-items:center;justify-content:center;flex-shrink:0;
+  font-size:.95rem;color:#fff;
+}
+.poi-icon.beach{background:var(--beach-blue)}
+.poi-icon.restaurant{background:var(--restaurant-terra)}
+.poi-icon.hiking{background:var(--hike-green)}
+.poi-icon.attraction{background:var(--attraction-purple)}
+.poi-info{min-width:0}
+.poi-name{
+  font-weight:600;font-size:.88rem;line-height:1.2;
+  color:var(--charcoal);margin-bottom:3px;
+}
+.poi-snippet{
+  font-size:.75rem;color:var(--warm-gray);line-height:1.35;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.poi-distance{
+  font-size:.68rem;color:var(--ocean);font-weight:600;margin-top:4px;
+  display:flex;align-items:center;gap:4px;
+}
+
+/* ── TIPS SECTION ── */
+.tips-section{
+  flex-shrink:0;padding:14px 18px;
+  background:var(--sand);border-top:1px solid var(--sand-dark);
+  position:relative;z-index:2;
+}
+.tips-toggle{
+  font-size:.78rem;font-weight:600;color:var(--ocean-deep);cursor:pointer;
+  display:flex;align-items:center;gap:6px;border:none;background:none;
+  font-family:var(--font-body);width:100%;
+}
+.tips-toggle i.chevron{transition:transform .3s ease;font-size:.65rem}
+.tips-toggle i.chevron.open{transform:rotate(180deg)}
+.tips-content{
+  max-height:0;overflow:hidden;transition:max-height .4s ease;
+}
+.tips-content.open{max-height:300px}
+.tips-content ul{
+  list-style:none;padding:10px 0 2px;font-size:.73rem;color:var(--warm-gray);line-height:1.7;
+}
+.tips-content li{padding-left:18px;position:relative}
+.tips-content li::before{
+  content:'\f3c5';font-family:'Font Awesome 6 Free';font-weight:900;
+  position:absolute;left:0;color:var(--ocean);font-size:.6rem;top:2px;
+}
+
+/* ── TOGGLE BUTTON ── */
+.sidebar-toggle{
+  position:fixed;top:16px;left:16px;z-index:1001;
+  width:44px;height:44px;border-radius:12px;border:none;
+  background:var(--white);box-shadow:0 2px 16px rgba(0,0,0,.18);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;color:var(--ocean-deep);
+  transition:all .3s ease;
+}
+.sidebar-toggle:hover{transform:scale(1.05);box-shadow:0 4px 20px rgba(0,0,0,.22)}
+.sidebar-toggle.shifted{left:calc(var(--sidebar-w) + 16px)}
+
+/* ── MAP OVERRIDES ── */
+.leaflet-popup-content-wrapper{
+  border-radius:14px!important;box-shadow:0 8px 32px rgba(0,0,0,.18)!important;
+  padding:0!important;overflow:hidden;border:none!important;
+}
+.leaflet-popup-content{margin:0!important;min-width:260px;max-width:300px}
+.leaflet-popup-tip{box-shadow:0 4px 12px rgba(0,0,0,.12)!important}
+
+.popup-inner{font-family:var(--font-body)}
+.popup-header{
+  padding:16px 18px 12px;position:relative;
+}
+.popup-header.beach{background:linear-gradient(135deg,#e3f2fd,#bbdefb)}
+.popup-header.restaurant{background:linear-gradient(135deg,#fbe9e7,#ffccbc)}
+.popup-header.hiking{background:linear-gradient(135deg,#e8f5e9,#c8e6c9)}
+.popup-header.attraction{background:linear-gradient(135deg,#f3e5f5,#e1bee7)}
+.popup-cat-tag{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:.65rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.06em;padding:3px 10px;border-radius:20px;
+  color:#fff;margin-bottom:8px;
+}
+.popup-cat-tag.beach{background:var(--beach-blue)}
+.popup-cat-tag.restaurant{background:var(--restaurant-terra)}
+.popup-cat-tag.hiking{background:var(--hike-green)}
+.popup-cat-tag.attraction{background:var(--attraction-purple)}
+.popup-title{
+  font-family:var(--font-display);font-size:1.15rem;font-weight:700;
+  color:var(--charcoal);line-height:1.2;
+}
+.popup-body{padding:12px 18px 16px}
+.popup-desc{font-size:.8rem;line-height:1.55;color:var(--warm-gray)}
+.popup-meta{
+  margin-top:10px;display:flex;align-items:center;gap:6px;
+  font-size:.72rem;color:var(--ocean);font-weight:600;
+}
+
+/* ── CUSTOM MARKERS ── */
+.custom-marker{
+  display:flex;align-items:center;justify-content:center;
+  border-radius:50% 50% 50% 0;transform:rotate(-45deg);
+  box-shadow:0 3px 12px rgba(0,0,0,.25);
+  border:2.5px solid #fff;transition:transform .2s ease;
+}
+.custom-marker i{transform:rotate(45deg);color:#fff;font-size:13px}
+.custom-marker:hover{transform:rotate(-45deg) scale(1.15)}
+
+.home-marker{
+  width:48px;height:48px;border-radius:50%;
+  background:var(--ocean-deep);border:3px solid #fff;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 0 0 rgba(14,74,94,.4);
+  animation:homePulse 2.5s ease-in-out infinite;
+}
+.home-marker i{color:#fff;font-size:20px}
+
+@keyframes homePulse{
+  0%{box-shadow:0 0 0 0 rgba(14,74,94,.45)}
+  50%{box-shadow:0 0 0 18px rgba(14,74,94,0)}
+  100%{box-shadow:0 0 0 0 rgba(14,74,94,0)}
+}
+
+/* ── ROUTE LABELS ── */
+.route-label{
+  background:rgba(255,255,255,.92);backdrop-filter:blur(4px);
+  padding:5px 11px;border-radius:8px;font-family:var(--font-body);
+  font-size:.72rem;font-weight:600;color:var(--ocean-deep);
+  box-shadow:0 2px 8px rgba(0,0,0,.12);white-space:nowrap;
+  border:1px solid rgba(26,107,138,.2);
+}
+
+/* ── WELCOME OVERLAY ── */
+.welcome-overlay{
+  position:fixed;inset:0;z-index:2000;
+  background:linear-gradient(135deg,var(--ocean-deep) 0%,var(--ocean) 40%,#2a8ab0 100%);
+  display:flex;align-items:center;justify-content:center;
+  opacity:1;transition:opacity .8s ease;pointer-events:all;
+}
+.welcome-overlay.hide{opacity:0;pointer-events:none}
+.welcome-content{text-align:center;color:#fff;max-width:520px;padding:30px}
+.welcome-content h1{
+  font-family:var(--font-display);font-size:clamp(2rem,5vw,3.2rem);
+  font-weight:700;line-height:1.1;margin-bottom:12px;
+}
+.welcome-content h1 em{font-style:italic;opacity:.85}
+.welcome-content p{font-size:1.05rem;opacity:.8;line-height:1.6;margin-bottom:32px}
+.welcome-btn{
+  border:none;padding:14px 40px;border-radius:30px;
+  background:#fff;color:var(--ocean-deep);
+  font-family:var(--font-body);font-size:1rem;font-weight:700;
+  cursor:pointer;transition:all .3s ease;
+  box-shadow:0 4px 20px rgba(0,0,0,.2);letter-spacing:.02em;
+}
+.welcome-btn:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 8px 30px rgba(0,0,0,.3)}
+.welcome-wave{
+  position:absolute;bottom:0;left:0;right:0;
+  height:100px;overflow:hidden;
+}
+.welcome-wave svg{
+  position:absolute;bottom:0;width:200%;
+  animation:waveSlide 8s linear infinite;
+}
+@keyframes waveSlide{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* ── ZOOM CONTROLS ── */
+.leaflet-control-zoom a{
+  background:var(--white)!important;color:var(--ocean-deep)!important;
+  font-weight:700!important;border-radius:10px!important;
+  width:36px!important;height:36px!important;line-height:36px!important;
+  box-shadow:0 2px 8px rgba(0,0,0,.12)!important;
+}
+.leaflet-control-zoom{border:none!important;border-radius:12px!important;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.15)!important}
+
+/* ── LOADING SKELETONS ── */
+.loading-card{
+  height:60px;border-radius:12px;margin-bottom:6px;
+  background:linear-gradient(90deg,var(--sand) 25%,var(--sand-dark) 50%,var(--sand) 75%);
+  background-size:200%;animation:shimmer 1.5s infinite;
+}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* ── MOBILE ── */
+@media(max-width:768px){
+  :root{--sidebar-w:100vw}
+  .sidebar{position:fixed;top:0;left:0;height:100%;width:100%;max-width:380px}
+  .sidebar.collapsed{transform:translateX(-100%)}
+  .sidebar-toggle{left:12px;top:12px}
+  .sidebar-toggle.shifted{left:12px}
+  .sidebar-header h1{font-size:1.35rem}
+}
+
+/* ── ATTRIBUTION ── */
+.leaflet-control-attribution{
+  font-size:.6rem!important;background:rgba(255,255,255,.8)!important;
+  backdrop-filter:blur(4px);border-radius:6px 0 0 0!important;
+  padding:2px 8px!important;
+}
+</style>
+</head>
+<body>
+
+<!-- Welcome Overlay -->
+<div class="welcome-overlay" id="welcome">
+  <div class="welcome-content">
+    <h1>Explore the<br><em>Opatija Riviera</em></h1>
+    <p>Your local guide to the best beaches, restaurants, trails and hidden gems along Croatia's stunning coastline.</p>
+    <button class="welcome-btn" onclick="dismissWelcome()">
+      <i class="fa-solid fa-compass"></i>&ensp;Start Exploring
+    </button>
+  </div>
+  <div class="welcome-wave">
+    <svg viewBox="0 0 2880 100" preserveAspectRatio="none" fill="rgba(255,255,255,.08)">
+      <path d="M0,40 C360,90 720,10 1080,50 C1440,90 1800,10 2160,50 C2520,90 2880,10 2880,50 L2880,100 L0,100Z"/>
+    </svg>
+  </div>
+</div>
+
+<!-- Sidebar Toggle -->
+<button class="sidebar-toggle shifted" id="sidebarToggle" onclick="toggleSidebar()" title="Toggle sidebar">
+  <i class="fa-solid fa-bars"></i>
+</button>
+
+<div class="app">
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="header-deco">~</div>
+      <h1>Opatija Riviera</h1>
+      <p>Your pocket guide to beaches, dining, hikes &amp; hidden gems</p>
+    </div>
+
+    <div class="filters" id="filters">
+      <button class="filter-btn active" data-cat="all" onclick="filterPOIs('all')">
+        <i class="fa-solid fa-border-all"></i> All <span class="filter-count" id="count-all"></span>
+      </button>
+      <button class="filter-btn" data-cat="beach" onclick="filterPOIs('beach')">
+        <i class="fa-solid fa-umbrella-beach"></i> Beaches <span class="filter-count" id="count-beach"></span>
+      </button>
+      <button class="filter-btn" data-cat="restaurant" onclick="filterPOIs('restaurant')">
+        <i class="fa-solid fa-utensils"></i> Dining <span class="filter-count" id="count-restaurant"></span>
+      </button>
+      <button class="filter-btn" data-cat="hiking" onclick="filterPOIs('hiking')">
+        <i class="fa-solid fa-person-hiking"></i> Hikes <span class="filter-count" id="count-hiking"></span>
+      </button>
+      <button class="filter-btn" data-cat="attraction" onclick="filterPOIs('attraction')">
+        <i class="fa-solid fa-landmark"></i> Sights <span class="filter-count" id="count-attraction"></span>
+      </button>
+    </div>
+
+    <div class="poi-list" id="poiList"></div>
+
+    <div class="tips-section">
+      <button class="tips-toggle" onclick="toggleTips()">
+        <i class="fa-solid fa-lightbulb"></i>
+        Getting Around Tips
+        <i class="fa-solid fa-chevron-down chevron" id="tipsChevron" style="margin-left:auto"></i>
+      </button>
+      <div class="tips-content" id="tipsContent">
+        <ul>
+          <li>Brsec Beach is a 1km steep walk down from parking -- wear good shoes &amp; bring water</li>
+          <li>The Lungomare coastal walk is flat and easy -- perfect for any fitness level</li>
+          <li>Bus line 32 connects Opatija to Moscenicka Draga along the coast</li>
+          <li>Most beaches are pebble -- bring water shoes for comfort</li>
+          <li>Restaurants fill up fast in summer -- book Plavi Podrum and Zijavica in advance</li>
+          <li>For Vojak summit, start early morning for the clearest views</li>
+        </ul>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Map -->
+  <div id="map"></div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// ── DATA ──
+const HOME = { lat: 45.163, lng: 14.219, name: 'Your Accommodation', address: 'Stepca 45, Zagore' };
+
+const POIS = [
+  // BEACHES
+  { id: 'b1', name: 'Brsec Beach (Klancac)', cat: 'beach', lat: 45.1837, lng: 14.2443, icon: 'fa-umbrella-beach',
+    desc: 'Hidden gem under dramatic cliffs. 300m pebble beach with crystal-clear water. One of Croatia\'s most beautiful secret beaches. No facilities -- bring supplies! 1km steep path from parking.',
+    distance: '~4km drive + 1km walk' },
+  { id: 'b2', name: 'Sipar Beach', cat: 'beach', lat: 45.237, lng: 14.254, icon: 'fa-umbrella-beach',
+    desc: 'Largest beach in Moscenicka Draga. Blue Flag certified. Beautiful pebbles with full facilities including showers, cafes, and rentals.',
+    distance: '~10km, 15 min drive' },
+  { id: 'b3', name: 'Sveti Ivan Beach', cat: 'beach', lat: 45.225, lng: 14.255, icon: 'fa-umbrella-beach',
+    desc: 'Ranked 37th most beautiful beach in Europe! Named after a charming 1628 church right on the beach edge.',
+    distance: '~9km, 13 min drive' },
+  { id: 'b4', name: 'Uboka Bay', cat: 'beach', lat: 45.2147, lng: 14.2476, icon: 'fa-umbrella-beach',
+    desc: 'Wild, secluded cove between Moscenicka Draga and Brsec. A real insider tip for those wanting privacy and untouched nature.',
+    distance: '~7km, 12 min drive' },
+  { id: 'b5', name: 'Medveja Beach', cat: 'beach', lat: 45.2691, lng: 14.2683, icon: 'fa-umbrella-beach',
+    desc: '400m pebble beach near Lovran surrounded by pine forest. Full facilities. Great for families.',
+    distance: '~18km, 22 min drive' },
+  { id: 'b6', name: 'Slatina Beach', cat: 'beach', lat: 45.3331, lng: 14.3046, icon: 'fa-umbrella-beach',
+    desc: 'Opatija\'s main beach. Blue Flag certified. 400m with all amenities, restaurants, and nightlife nearby.',
+    distance: '~25km, 30 min drive' },
+
+  // RESTAURANTS
+  { id: 'r1', name: 'Konoba Zijavica', cat: 'restaurant', lat: 45.231, lng: 14.247, icon: 'fa-utensils',
+    desc: 'Michelin recommended! Beachfront in Moscenicka Draga. Famous for fresh daily catch and scampi. JRE member.',
+    distance: '~10km, 14 min drive', tag: 'Michelin' },
+  { id: 'r2', name: 'Johnson', cat: 'restaurant', lat: 45.238, lng: 14.249, icon: 'fa-utensils',
+    desc: 'Michelin selected. Charming family house above Moscenicka Draga. 60 years of culinary tradition.',
+    distance: '~10km, 15 min drive', tag: 'Michelin' },
+  { id: 'r3', name: 'Konoba Pescaria', cat: 'restaurant', lat: 45.232, lng: 14.248, icon: 'fa-utensils',
+    desc: 'Harbour-side in Moscenicka Draga. Excellent Mediterranean seafood in a casual setting.',
+    distance: '~10km, 14 min drive' },
+  { id: 'r4', name: 'Konoba Slamnjaki', cat: 'restaurant', lat: 45.235, lng: 14.248, icon: 'fa-utensils',
+    desc: 'Hilltop terrace near Sv. Jelena. Amazing views and great value for money.',
+    distance: '~10km, 14 min drive' },
+  { id: 'r5', name: 'Bevanda', cat: 'restaurant', lat: 45.337, lng: 14.305, icon: 'fa-utensils',
+    desc: '5-star fine dining on Opatija waterfront. Stunning sea views. Special occasion worthy.',
+    distance: '~25km, 30 min drive', tag: 'Fine Dining' },
+  { id: 'r6', name: 'Plavi Podrum', cat: 'restaurant', lat: 45.348, lng: 14.320, icon: 'fa-utensils',
+    desc: 'Twice on World\'s 100 Best Restaurants list! In charming Volosko fishing village. A must-visit.',
+    distance: '~28km, 33 min drive', tag: 'World Top 100' },
+  { id: 'r7', name: 'Pansion Ucka', cat: 'restaurant', lat: 45.292, lng: 14.192, icon: 'fa-utensils',
+    desc: 'Mountain restaurant at Poklon Pass (920m altitude). Famous for game dishes and mountain air.',
+    distance: '~20km, 30 min drive' },
+
+  // HIKING
+  { id: 'h1', name: 'Lungomare (Start - Volosko)', cat: 'hiking', lat: 45.348, lng: 14.319, icon: 'fa-person-hiking',
+    desc: 'Start of Croatia\'s most famous coastal walk. 12km along the sea from Volosko to Lovran. Easy, flat, stunning.',
+    distance: '~28km drive to start' },
+  { id: 'h2', name: 'Lungomare (End - Lovran)', cat: 'hiking', lat: 45.291, lng: 14.270, icon: 'fa-person-hiking',
+    desc: 'Southern end of the Lungomare. The walk takes 3-4 hours one way. Take the bus back!',
+    distance: '~17km drive to start' },
+  { id: 'h3', name: 'Poklon Pass (Ucka Park)', cat: 'hiking', lat: 45.292, lng: 14.192, icon: 'fa-person-hiking',
+    desc: 'Gateway to Ucka Nature Park. Visitor center and start of the trail to Vojak summit.',
+    distance: '~20km, 30 min drive' },
+  { id: 'h4', name: 'Vojak Summit (1,401m)', cat: 'hiking', lat: 45.285, lng: 14.202, icon: 'fa-mountain-sun',
+    desc: 'Highest peak in Istria at 1,401m! 1911 observation tower with views all the way to the Alps on clear days.',
+    distance: '~3.5h hike from Poklon' },
+  { id: 'h5', name: '753 Steps (Moscenice)', cat: 'hiking', lat: 45.2264, lng: 14.2536, icon: 'fa-stairs',
+    desc: 'Historic stone stairway connecting medieval Moscenice village to the coast. A unique cultural hike.',
+    distance: '~8km, 12 min drive' },
+
+  // ATTRACTIONS
+  { id: 'a1', name: 'Maiden with the Seagull', cat: 'attraction', lat: 45.3335, lng: 14.3060, icon: 'fa-camera',
+    desc: 'Opatija\'s most iconic statue (1956). The most photographed spot on the entire Riviera.',
+    distance: '~25km, 30 min drive' },
+  { id: 'a2', name: 'Villa Angiolina & Park', cat: 'attraction', lat: 45.3357, lng: 14.3120, icon: 'fa-tree',
+    desc: 'Beautiful 1844 villa housing the Croatian Tourism Museum. Park has 150+ exotic plant species.',
+    distance: '~25km, 30 min drive' },
+  { id: 'a3', name: 'Moscenice Village', cat: 'attraction', lat: 45.2264, lng: 14.2536, icon: 'fa-landmark',
+    desc: 'Perfectly preserved medieval hilltop village. Ethnographic museum and traditional olive mill.',
+    distance: '~8km, 12 min drive' },
+  { id: 'a4', name: 'Brsec Village', cat: 'attraction', lat: 45.183, lng: 14.230, icon: 'fa-landmark',
+    desc: 'Medieval hilltop village with ancient Glagolitic inscriptions. Hosts a Blues Festival!',
+    distance: '~3km, 5 min drive' },
+  { id: 'a5', name: 'Volosko', cat: 'attraction', lat: 45.348, lng: 14.319, icon: 'fa-palette',
+    desc: 'Charming fishing village turned gourmet capital. Wander narrow streets and discover art galleries.',
+    distance: '~28km, 33 min drive' },
+  { id: 'a6', name: 'Lovran Old Town', cat: 'attraction', lat: 45.2917, lng: 14.2700, icon: 'fa-chess-rook',
+    desc: 'Medieval walled town. Don\'t miss the famous Chestnut Festival in October.',
+    distance: '~17km, 20 min drive' },
+  { id: 'a7', name: 'Ljubo de Karina Gallery', cat: 'attraction', lat: 45.170, lng: 14.220, icon: 'fa-palette',
+    desc: 'Open-air sculpture park right in Zagore by renowned Croatian sculptor. Walking distance from your accommodation!',
+    distance: '~800m walk' },
+];
+
+const ROUTES = [
+  {
+    name: 'Route to Brsec Beach',
+    label: '~4km drive + 1km walk down',
+    points: [[45.163,14.219],[45.168,14.225],[45.175,14.230],[45.180,14.235],[45.1837,14.2443]],
+    color: '#2196F3'
+  },
+  {
+    name: 'Route to Moscenicka Draga',
+    label: '~10km drive, 15 min',
+    points: [[45.163,14.219],[45.175,14.230],[45.190,14.240],[45.210,14.250],[45.225,14.255],[45.237,14.254]],
+    color: '#2196F3'
+  }
+];
+
+const CAT_COLORS = {
+  beach: '#2196F3',
+  restaurant: '#E8713A',
+  hiking: '#4CAF50',
+  attraction: '#9C5EC7'
+};
+
+const CAT_ICONS = {
+  beach: 'fa-umbrella-beach',
+  restaurant: 'fa-utensils',
+  hiking: 'fa-person-hiking',
+  attraction: 'fa-landmark'
+};
+
+// ── MAP INIT ──
+const map = L.map('map', {
+  center: [45.26, 14.27],
+  zoom: 12,
+  zoomControl: false,
+  attributionControl: true
+});
+
+L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd',
+  maxZoom: 19
+}).addTo(map);
+
+// ── MARKERS ──
+function createMarkerIcon(cat, iconClass) {
+  const color = CAT_COLORS[cat];
+  return L.divIcon({
+    className: '',
+    html: `<div class="custom-marker" style="width:34px;height:34px;background:${color}"><i class="fa-solid ${iconClass}"></i></div>`,
+    iconSize: [34, 34],
+    iconAnchor: [17, 34],
+    popupAnchor: [0, -36]
+  });
+}
+
+const homeIcon = L.divIcon({
+  className: '',
+  html: '<div class="home-marker"><i class="fa-solid fa-house"></i></div>',
+  iconSize: [48, 48],
+  iconAnchor: [24, 24],
+  popupAnchor: [0, -28]
+});
+
+// Home marker
+const homeMarker = L.marker([HOME.lat, HOME.lng], { icon: homeIcon, zIndexOffset: 1000 })
+  .addTo(map)
+  .bindPopup(`
+    <div class="popup-inner">
+      <div class="popup-header" style="background:linear-gradient(135deg,#e0f2f1,#b2dfdb)">
+        <span class="popup-cat-tag" style="background:var(--ocean-deep)"><i class="fa-solid fa-house"></i>&ensp;Home Base</span>
+        <div class="popup-title">${HOME.name}</div>
+      </div>
+      <div class="popup-body">
+        <div class="popup-desc">${HOME.address}<br><br>This is where you're staying! All distances on this map are measured from here.</div>
+      </div>
+    </div>
+  `);
+
+// POI markers
+const markers = {};
+const markerLayers = L.layerGroup().addTo(map);
+
+POIS.forEach(poi => {
+  const marker = L.marker([poi.lat, poi.lng], {
+    icon: createMarkerIcon(poi.cat, poi.icon || CAT_ICONS[poi.cat])
+  });
+
+  const tagHtml = poi.tag ? `<span style="display:inline-block;margin-left:8px;font-size:.6rem;background:gold;color:#333;padding:1px 7px;border-radius:8px;font-weight:700">${poi.tag}</span>` : '';
+
+  marker.bindPopup(`
+    <div class="popup-inner">
+      <div class="popup-header ${poi.cat}">
+        <span class="popup-cat-tag ${poi.cat}"><i class="fa-solid ${CAT_ICONS[poi.cat]}"></i>&ensp;${poi.cat === 'restaurant' ? 'Restaurant' : poi.cat.charAt(0).toUpperCase() + poi.cat.slice(1)}</span>${tagHtml}
+        <div class="popup-title">${poi.name}</div>
+      </div>
+      <div class="popup-body">
+        <div class="popup-desc">${poi.desc}</div>
+        ${poi.distance ? `<div class="popup-meta"><i class="fa-solid fa-route"></i> From home: ${poi.distance}</div>` : ''}
+      </div>
+    </div>
+  `);
+
+  marker.poiData = poi;
+  markers[poi.id] = marker;
+  markerLayers.addLayer(marker);
+});
+
+// ── ROUTES ──
+ROUTES.forEach(route => {
+  const polyline = L.polyline(route.points, {
+    color: route.color,
+    weight: 3.5,
+    opacity: 0.7,
+    dashArray: '8, 10',
+    lineCap: 'round'
+  }).addTo(map);
+
+  const midIdx = Math.floor(route.points.length / 2);
+  const midPoint = route.points[midIdx];
+  L.marker(midPoint, {
+    icon: L.divIcon({
+      className: '',
+      html: `<div class="route-label"><i class="fa-solid fa-route"></i>&ensp;${route.label}</div>`,
+      iconSize: [200, 30],
+      iconAnchor: [100, 15]
+    }),
+    interactive: false
+  }).addTo(map);
+});
+
+// ── LUNGOMARE PATH ──
+const lungomarePath = [
+  [45.348, 14.319], [45.345, 14.315], [45.340, 14.310],
+  [45.335, 14.306], [45.330, 14.302], [45.325, 14.298],
+  [45.318, 14.292], [45.310, 14.285], [45.305, 14.280],
+  [45.298, 14.275], [45.291, 14.270]
+];
+L.polyline(lungomarePath, {
+  color: '#4CAF50', weight: 3.5, opacity: 0.65,
+  dashArray: '6, 8', lineCap: 'round'
+}).addTo(map);
+
+const lungoMid = lungomarePath[Math.floor(lungomarePath.length / 2)];
+L.marker(lungoMid, {
+  icon: L.divIcon({
+    className: '',
+    html: '<div class="route-label" style="border-color:rgba(76,175,80,.3)"><i class="fa-solid fa-shoe-prints" style="color:#4CAF50"></i>&ensp;Lungomare (12km)</div>',
+    iconSize: [160, 30], iconAnchor: [80, 15]
+  }),
+  interactive: false
+}).addTo(map);
+
+// ── SIDEBAR LIST ──
+let activeFilter = 'all';
+let activeCard = null;
+
+function renderList(filter) {
+  const list = document.getElementById('poiList');
+  const filtered = filter === 'all' ? POIS : POIS.filter(p => p.cat === filter);
+  list.innerHTML = '';
+
+  filtered.forEach((poi, i) => {
+    const card = document.createElement('div');
+    card.className = 'poi-card';
+    card.id = `card-${poi.id}`;
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(12px)';
+    card.innerHTML = `
+      <div class="poi-icon ${poi.cat}"><i class="fa-solid ${poi.icon || CAT_ICONS[poi.cat]}"></i></div>
+      <div class="poi-info">
+        <div class="poi-name">${poi.name}</div>
+        <div class="poi-snippet">${poi.desc}</div>
+        ${poi.distance ? `<div class="poi-distance"><i class="fa-solid fa-route"></i> ${poi.distance}</div>` : ''}
+      </div>
+    `;
+    card.onclick = () => flyToPOI(poi);
+    list.appendChild(card);
+
+    setTimeout(() => {
+      card.style.transition = 'opacity .35s ease, transform .35s ease';
+      card.style.opacity = '1';
+      card.style.transform = 'translateY(0)';
+    }, 40 * i);
+  });
+}
+
+function flyToPOI(poi) {
+  map.flyTo([poi.lat, poi.lng], 15, { duration: 1.2 });
+  markers[poi.id].openPopup();
+
+  document.querySelectorAll('.poi-card').forEach(c => c.classList.remove('active-card'));
+  const card = document.getElementById(`card-${poi.id}`);
+  if (card) card.classList.add('active-card');
+
+  // On mobile, collapse sidebar after selection
+  if (window.innerWidth <= 768) {
+    setTimeout(() => toggleSidebar(), 300);
+  }
+}
+
+function filterPOIs(cat) {
+  activeFilter = cat;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`[data-cat="${cat}"]`).classList.add('active');
+
+  // Show/hide markers
+  markerLayers.clearLayers();
+  POIS.forEach(poi => {
+    if (cat === 'all' || poi.cat === cat) {
+      markerLayers.addLayer(markers[poi.id]);
+    }
+  });
+
+  renderList(cat);
+
+  // Fit bounds to visible markers
+  if (cat !== 'all') {
+    const visible = POIS.filter(p => p.cat === cat);
+    if (visible.length) {
+      const bounds = L.latLngBounds(visible.map(p => [p.lat, p.lng]));
+      bounds.extend([HOME.lat, HOME.lng]);
+      map.flyToBounds(bounds, { padding: [60, 60], duration: 1 });
+    }
+  } else {
+    map.flyTo([45.26, 14.27], 12, { duration: 1 });
+  }
+}
+
+// Update counts
+function updateCounts() {
+  document.getElementById('count-all').textContent = POIS.length;
+  ['beach', 'restaurant', 'hiking', 'attraction'].forEach(cat => {
+    document.getElementById(`count-${cat}`).textContent = POIS.filter(p => p.cat === cat).length;
+  });
+}
+
+// ── SIDEBAR TOGGLE ──
+let sidebarOpen = true;
+function toggleSidebar() {
+  sidebarOpen = !sidebarOpen;
+  document.getElementById('sidebar').classList.toggle('collapsed', !sidebarOpen);
+  document.getElementById('sidebarToggle').classList.toggle('shifted', sidebarOpen);
+  document.getElementById('sidebarToggle').innerHTML = sidebarOpen
+    ? '<i class="fa-solid fa-bars"></i>'
+    : '<i class="fa-solid fa-bars"></i>';
+  setTimeout(() => map.invalidateSize(), 450);
+}
+
+// ── TIPS TOGGLE ──
+function toggleTips() {
+  const content = document.getElementById('tipsContent');
+  const chevron = document.getElementById('tipsChevron');
+  content.classList.toggle('open');
+  chevron.classList.toggle('open');
+}
+
+// ── WELCOME ──
+function dismissWelcome() {
+  document.getElementById('welcome').classList.add('hide');
+  setTimeout(() => {
+    document.getElementById('welcome').style.display = 'none';
+    map.invalidateSize();
+    map.flyTo([HOME.lat, HOME.lng], 13, { duration: 1.5 });
+    setTimeout(() => homeMarker.openPopup(), 1600);
+  }, 800);
+}
+
+// ── CLICK MARKER -> HIGHLIGHT CARD ──
+Object.values(markers).forEach(marker => {
+  marker.on('click', () => {
+    const poi = marker.poiData;
+    document.querySelectorAll('.poi-card').forEach(c => c.classList.remove('active-card'));
+    const card = document.getElementById(`card-${poi.id}`);
+    if (card) {
+      card.classList.add('active-card');
+      card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  });
+});
+
+// ── INIT ──
+updateCounts();
+renderList('all');
+</script>
+</body>
+</html>
