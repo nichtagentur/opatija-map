@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Opatija Riviera Guide</title>
+<title>Kaiser Villa Guide</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -178,6 +178,9 @@ html,body{height:100%;font-family:var(--font-body);background:var(--charcoal);co
 .leaflet-popup-tip{box-shadow:0 4px 12px rgba(0,0,0,.12)!important}
 
 .popup-inner{font-family:var(--font-body)}
+.popup-img{
+  width:100%;height:140px;object-fit:cover;display:block;
+}
 .popup-header{
   padding:16px 18px 12px;position:relative;
 }
@@ -210,7 +213,7 @@ html,body{height:100%;font-family:var(--font-body);background:var(--charcoal);co
 .custom-marker{
   display:flex;align-items:center;justify-content:center;
   border-radius:50% 50% 50% 0;transform:rotate(-45deg);
-  box-shadow:0 3px 12px rgba(0,0,0,.25);
+  box-shadow:0 3px 14px rgba(0,0,0,.4);
   border:2.5px solid #fff;transition:transform .2s ease;
 }
 .custom-marker i{transform:rotate(45deg);color:#fff;font-size:13px}
@@ -313,8 +316,8 @@ html,body{height:100%;font-family:var(--font-body);background:var(--charcoal);co
 <!-- Welcome Overlay -->
 <div class="welcome-overlay" id="welcome">
   <div class="welcome-content">
-    <h1>Explore the<br><em>Opatija Riviera</em></h1>
-    <p>Your local guide to the best beaches, restaurants, trails and hidden gems along Croatia's stunning coastline.</p>
+    <h1>Welcome to the<br><em>Kaiser Villa Guide</em></h1>
+    <p>Your local guide to the best beaches, restaurants, trails and hidden gems around your Airbnb.</p>
     <button class="welcome-btn" onclick="dismissWelcome()">
       <i class="fa-solid fa-compass"></i>&ensp;Start Exploring
     </button>
@@ -336,8 +339,8 @@ html,body{height:100%;font-family:var(--font-body);background:var(--charcoal);co
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
       <div class="header-deco">~</div>
-      <h1>Opatija Riviera</h1>
-      <p>Your pocket guide to beaches, dining, hikes &amp; hidden gems</p>
+      <h1>Kaiser Villa Guide</h1>
+      <p>Your guide to things to do around the Airbnb</p>
     </div>
 
     <div class="filters" id="filters">
@@ -392,88 +395,114 @@ const POIS = [
   // BEACHES
   { id: 'b0', name: 'Stupova Beach', cat: 'beach', lat: 45.153744, lng: 14.226576, icon: 'fa-umbrella-beach',
     desc: 'Your nearest beach! A beautiful secluded cove just south of Zagore. Rocky coastline with crystal-clear Adriatic water. Perfect for a quick swim on a hot day.',
-    distance: '~1.5km walk from home' },
+    distance: '~1.5km walk from home',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Kvarner_bay.jpg/600px-Kvarner_bay.jpg' },
   { id: 'b1', name: 'Brsec Beach (Klancac)', cat: 'beach', lat: 45.1837, lng: 14.2443, icon: 'fa-umbrella-beach',
     desc: 'Hidden gem under dramatic cliffs. 300m pebble beach with crystal-clear water. One of Croatia\'s most beautiful secret beaches. No facilities -- bring supplies! 1km steep path from parking.',
-    distance: '~4km drive + 1km walk' },
+    distance: '~4km drive + 1km walk',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Brsec-Kvarner1.jpg/600px-Brsec-Kvarner1.jpg' },
   { id: 'b2', name: 'Sipar Beach', cat: 'beach', lat: 45.237, lng: 14.254, icon: 'fa-umbrella-beach',
     desc: 'Largest beach in Moscenicka Draga. Blue Flag certified. Beautiful pebbles with full facilities including showers, cafes, and rentals.',
-    distance: '~10km, 15 min drive' },
+    distance: '~10km, 15 min drive',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/HR-PG-Mo%C5%A1%C4%87eni%C4%8Dka_Draga03.jpg/600px-HR-PG-Mo%C5%A1%C4%87eni%C4%8Dka_Draga03.jpg' },
   { id: 'b3', name: 'Sveti Ivan Beach', cat: 'beach', lat: 45.225, lng: 14.255, icon: 'fa-umbrella-beach',
     desc: 'Ranked 37th most beautiful beach in Europe! Named after a charming 1628 church right on the beach edge.',
-    distance: '~9km, 13 min drive' },
+    distance: '~9km, 13 min drive',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Mo%C5%A1%C4%87eni%C4%8Dka_Draga_-_pla%C5%BEa.jpg/600px-Mo%C5%A1%C4%87eni%C4%8Dka_Draga_-_pla%C5%BEa.jpg' },
   { id: 'b4', name: 'Uboka Bay', cat: 'beach', lat: 45.2147, lng: 14.2476, icon: 'fa-umbrella-beach',
     desc: 'Wild, secluded cove between Moscenicka Draga and Brsec. A real insider tip for those wanting privacy and untouched nature.',
-    distance: '~7km, 12 min drive' },
+    distance: '~7km, 12 min drive',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Croatie_Moscenicka_Draga_Plage_13082008_-_panoramio.jpg/600px-Croatie_Moscenicka_Draga_Plage_13082008_-_panoramio.jpg' },
   { id: 'b5', name: 'Medveja Beach', cat: 'beach', lat: 45.2691, lng: 14.2683, icon: 'fa-umbrella-beach',
     desc: '400m pebble beach near Lovran surrounded by pine forest. Full facilities. Great for families.',
-    distance: '~18km, 22 min drive' },
+    distance: '~18km, 22 min drive',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Medveja_-_pla%C5%BEa.jpg/600px-Medveja_-_pla%C5%BEa.jpg' },
   { id: 'b6', name: 'Slatina Beach', cat: 'beach', lat: 45.3331, lng: 14.3046, icon: 'fa-umbrella-beach',
     desc: 'Opatija\'s main beach. Blue Flag certified. 400m with all amenities, restaurants, and nightlife nearby.',
-    distance: '~25km, 30 min drive' },
+    distance: '~25km, 30 min drive',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Opatija_-_pla%C5%BEe.jpg/600px-Opatija_-_pla%C5%BEe.jpg' },
 
   // RESTAURANTS
   { id: 'r1', name: 'Konoba Zijavica', cat: 'restaurant', lat: 45.231, lng: 14.247, icon: 'fa-utensils',
     desc: 'Michelin recommended! Beachfront in Moscenicka Draga. Famous for fresh daily catch and scampi. JRE member.',
-    distance: '~10km, 14 min drive', tag: 'Michelin' },
+    distance: '~10km, 14 min drive', tag: 'Michelin',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/MoscenickaDraga1.jpg/600px-MoscenickaDraga1.jpg' },
   { id: 'r2', name: 'Johnson', cat: 'restaurant', lat: 45.238, lng: 14.249, icon: 'fa-utensils',
     desc: 'Michelin selected. Charming family house above Moscenicka Draga. 60 years of culinary tradition.',
-    distance: '~10km, 15 min drive', tag: 'Michelin' },
+    distance: '~10km, 15 min drive', tag: 'Michelin',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/HR-PG-Mo%C5%A1%C4%87eni%C4%8Dka_Draga01.jpg/600px-HR-PG-Mo%C5%A1%C4%87eni%C4%8Dka_Draga01.jpg' },
   { id: 'r3', name: 'Konoba Pescaria', cat: 'restaurant', lat: 45.232, lng: 14.248, icon: 'fa-utensils',
     desc: 'Harbour-side in Moscenicka Draga. Excellent Mediterranean seafood in a casual setting.',
-    distance: '~10km, 14 min drive' },
+    distance: '~10km, 14 min drive',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/MoscenickaDraga1.jpg/600px-MoscenickaDraga1.jpg' },
   { id: 'r4', name: 'Konoba Slamnjaki', cat: 'restaurant', lat: 45.235, lng: 14.248, icon: 'fa-utensils',
     desc: 'Hilltop terrace near Sv. Jelena. Amazing views and great value for money.',
-    distance: '~10km, 14 min drive' },
+    distance: '~10km, 14 min drive',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/HR-PG-Mo%C5%A1%C4%87eni%C4%8Dka_Draga01.jpg/600px-HR-PG-Mo%C5%A1%C4%87eni%C4%8Dka_Draga01.jpg' },
   { id: 'r5', name: 'Bevanda', cat: 'restaurant', lat: 45.337, lng: 14.305, icon: 'fa-utensils',
     desc: '5-star fine dining on Opatija waterfront. Stunning sea views. Special occasion worthy.',
-    distance: '~25km, 30 min drive', tag: 'Fine Dining' },
+    distance: '~25km, 30 min drive', tag: 'Fine Dining',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Opatija_-_Riva_-_panoramio.jpg/600px-Opatija_-_Riva_-_panoramio.jpg' },
   { id: 'r6', name: 'Plavi Podrum', cat: 'restaurant', lat: 45.348, lng: 14.320, icon: 'fa-utensils',
     desc: 'Twice on World\'s 100 Best Restaurants list! In charming Volosko fishing village. A must-visit.',
-    distance: '~28km, 33 min drive', tag: 'World Top 100' },
+    distance: '~28km, 33 min drive', tag: 'World Top 100',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/06.volosko.jpg/600px-06.volosko.jpg' },
   { id: 'r7', name: 'Pansion Ucka', cat: 'restaurant', lat: 45.292, lng: 14.192, icon: 'fa-utensils',
     desc: 'Mountain restaurant at Poklon Pass (920m altitude). Famous for game dishes and mountain air.',
-    distance: '~20km, 30 min drive' },
+    distance: '~20km, 30 min drive',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Info-centar.jpg/600px-Info-centar.jpg' },
 
   // HIKING
   { id: 'h1', name: 'Lungomare (Start - Volosko)', cat: 'hiking', lat: 45.348, lng: 14.319, icon: 'fa-person-hiking',
     desc: 'Start of Croatia\'s most famous coastal walk. 12km along the sea from Volosko to Lovran. Easy, flat, stunning.',
-    distance: '~28km drive to start' },
+    distance: '~28km drive to start',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Lungomare-Opatija.jpg/600px-Lungomare-Opatija.jpg' },
   { id: 'h2', name: 'Lungomare (End - Lovran)', cat: 'hiking', lat: 45.291, lng: 14.270, icon: 'fa-person-hiking',
     desc: 'Southern end of the Lungomare. The walk takes 3-4 hours one way. Take the bus back!',
-    distance: '~17km drive to start' },
+    distance: '~17km drive to start',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Lungomare-Opatija.jpg/600px-Lungomare-Opatija.jpg' },
   { id: 'h3', name: 'Poklon Pass (Ucka Park)', cat: 'hiking', lat: 45.292, lng: 14.192, icon: 'fa-person-hiking',
     desc: 'Gateway to Ucka Nature Park. Visitor center and start of the trail to Vojak summit.',
-    distance: '~20km, 30 min drive' },
+    distance: '~20km, 30 min drive',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Info-centar.jpg/600px-Info-centar.jpg' },
   { id: 'h4', name: 'Vojak Summit (1,401m)', cat: 'hiking', lat: 45.285, lng: 14.202, icon: 'fa-mountain-sun',
     desc: 'Highest peak in Istria at 1,401m! 1911 observation tower with views all the way to the Alps on clear days.',
-    distance: '~3.5h hike from Poklon' },
+    distance: '~3.5h hike from Poklon',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Croatia_U%C4%8Dka_Mountaintop.jpg/600px-Croatia_U%C4%8Dka_Mountaintop.jpg' },
   { id: 'h5', name: '753 Steps (Moscenice)', cat: 'hiking', lat: 45.2264, lng: 14.2536, icon: 'fa-stairs',
     desc: 'Historic stone stairway connecting medieval Moscenice village to the coast. A unique cultural hike.',
-    distance: '~8km, 12 min drive' },
+    distance: '~8km, 12 min drive',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Moscenice_0709_1.jpg/600px-Moscenice_0709_1.jpg' },
 
   // ATTRACTIONS
   { id: 'a1', name: 'Maiden with the Seagull', cat: 'attraction', lat: 45.3335, lng: 14.3060, icon: 'fa-camera',
     desc: 'Opatija\'s most iconic statue (1956). The most photographed spot on the entire Riviera.',
-    distance: '~25km, 30 min drive' },
+    distance: '~25km, 30 min drive',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Djevojka_s_galebom_%28Maiden_with_the_seagull%29.jpg/600px-Djevojka_s_galebom_%28Maiden_with_the_seagull%29.jpg' },
   { id: 'a2', name: 'Villa Angiolina & Park', cat: 'attraction', lat: 45.3357, lng: 14.3120, icon: 'fa-tree',
     desc: 'Beautiful 1844 villa housing the Croatian Tourism Museum. Park has 150+ exotic plant species.',
-    distance: '~25km, 30 min drive' },
+    distance: '~25km, 30 min drive',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Vila_Angiolina_s_perivojem_Z-6727.jpg/600px-Vila_Angiolina_s_perivojem_Z-6727.jpg' },
   { id: 'a3', name: 'Moscenice Village', cat: 'attraction', lat: 45.2264, lng: 14.2536, icon: 'fa-landmark',
     desc: 'Perfectly preserved medieval hilltop village. Ethnographic museum and traditional olive mill.',
-    distance: '~8km, 12 min drive' },
+    distance: '~8km, 12 min drive',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Moscenice_0709_1.jpg/600px-Moscenice_0709_1.jpg' },
   { id: 'a4', name: 'Brsec Village', cat: 'attraction', lat: 45.183, lng: 14.230, icon: 'fa-landmark',
     desc: 'Medieval hilltop village with ancient Glagolitic inscriptions. Hosts a Blues Festival!',
-    distance: '~3km, 5 min drive' },
+    distance: '~3km, 5 min drive',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Brsec_Istria.jpg/600px-Brsec_Istria.jpg' },
   { id: 'a5', name: 'Volosko', cat: 'attraction', lat: 45.348, lng: 14.319, icon: 'fa-palette',
     desc: 'Charming fishing village turned gourmet capital. Wander narrow streets and discover art galleries.',
-    distance: '~28km, 33 min drive' },
+    distance: '~28km, 33 min drive',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/07.Volosko.jpg/600px-07.Volosko.jpg' },
   { id: 'a6', name: 'Lovran Old Town', cat: 'attraction', lat: 45.2917, lng: 14.2700, icon: 'fa-chess-rook',
     desc: 'Medieval walled town. Don\'t miss the famous Chestnut Festival in October.',
-    distance: '~17km, 20 min drive' },
+    distance: '~17km, 20 min drive',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Croatia_BW_2014-10-10_15-06-52.jpg/600px-Croatia_BW_2014-10-10_15-06-52.jpg' },
   { id: 'a7', name: 'Ljubo de Karina Gallery', cat: 'attraction', lat: 45.170, lng: 14.220, icon: 'fa-palette',
     desc: 'Open-air sculpture park right in Zagore by renowned Croatian sculptor. Walking distance from your accommodation!',
-    distance: '~800m walk' },
+    distance: '~800m walk',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Kvarner_bay.jpg/600px-Kvarner_bay.jpg' },
 ];
 
 const ROUTES = [
@@ -521,11 +550,15 @@ const map = L.map('map', {
 
 L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
-  subdomains: 'abcd',
+const satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+  attribution: '&copy; Esri, Maxar, Earthstar Geographics',
   maxZoom: 19
-}).addTo(map);
+});
+const labels = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png', {
+  subdomains: 'abcd', maxZoom: 19, pane: 'overlayPane'
+});
+satellite.addTo(map);
+labels.addTo(map);
 
 // ── MARKERS ──
 function createMarkerIcon(cat, iconClass) {
@@ -575,6 +608,7 @@ POIS.forEach(poi => {
 
   marker.bindPopup(`
     <div class="popup-inner">
+      ${poi.img ? `<img class="popup-img" src="${poi.img}" alt="${poi.name}" loading="lazy" onerror="this.style.display='none'">` : ''}
       <div class="popup-header ${poi.cat}">
         <span class="popup-cat-tag ${poi.cat}"><i class="fa-solid ${CAT_ICONS[poi.cat]}"></i>&ensp;${poi.cat === 'restaurant' ? 'Restaurant' : poi.cat.charAt(0).toUpperCase() + poi.cat.slice(1)}</span>${tagHtml}
         <div class="popup-title">${poi.name}</div>
