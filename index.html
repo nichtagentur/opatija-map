@@ -390,6 +390,9 @@ const HOME = { lat: 45.163, lng: 14.219, name: 'Your Accommodation', address: 'S
 
 const POIS = [
   // BEACHES
+  { id: 'b0', name: 'Stupova Beach', cat: 'beach', lat: 45.153744, lng: 14.226576, icon: 'fa-umbrella-beach',
+    desc: 'Your nearest beach! A beautiful secluded cove just south of Zagore. Rocky coastline with crystal-clear Adriatic water. Perfect for a quick swim on a hot day.',
+    distance: '~1.5km walk from home' },
   { id: 'b1', name: 'Brsec Beach (Klancac)', cat: 'beach', lat: 45.1837, lng: 14.2443, icon: 'fa-umbrella-beach',
     desc: 'Hidden gem under dramatic cliffs. 300m pebble beach with crystal-clear water. One of Croatia\'s most beautiful secret beaches. No facilities -- bring supplies! 1km steep path from parking.',
     distance: '~4km drive + 1km walk' },
@@ -474,6 +477,12 @@ const POIS = [
 ];
 
 const ROUTES = [
+  {
+    name: 'Route to Stupova Beach',
+    label: '~1.5km walk',
+    points: [[45.163,14.219],[45.159,14.222],[45.155,14.224],[45.153744,14.226576]],
+    color: '#2196F3'
+  },
   {
     name: 'Route to Brsec Beach',
     label: '~4km drive + 1km walk down',
