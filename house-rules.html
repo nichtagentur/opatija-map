@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>House Rules - Kaiser Villa Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ocean:#3a9cbf;--ocean-deep:#1f7a9a;--ocean-light:#eaf6fa;
+  --terra:#d4845a;--terra-light:#faf0e8;
+  --sand:#f5ece0;--sand-dark:#ddd0bc;
+  --driftwood:#a89279;--driftwood-light:#f8f3ec;
+  --white:#fdfaf6;--charcoal:#3a3530;--warm-gray:#7d756d;
+  --font-display:'Libre Baskerville',Georgia,serif;
+  --font-body:'Outfit','Segoe UI',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font-body);background:var(--sand);color:var(--charcoal);
+  min-height:100vh;line-height:1.6;
+}
+
+/* ── HEADER ── */
+.page-header{
+  background:linear-gradient(160deg,#f5ece0 0%,#efe3d0 50%,#e8d9c4 100%);
+  padding:32px 24px 28px;text-align:center;position:relative;overflow:hidden;
+  border-bottom:3px solid var(--sand-dark);
+}
+.page-header::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
+  background:repeating-linear-gradient(90deg,var(--ocean) 0,var(--ocean) 8px,transparent 8px,transparent 14px);
+  opacity:.4;
+}
+.back-link{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.78rem;color:var(--ocean-deep);text-decoration:none;
+  font-weight:500;margin-bottom:14px;padding:5px 14px;border-radius:20px;
+  border:1.5px solid var(--sand-dark);background:rgba(255,255,255,.5);
+  transition:all .2s ease;
+}
+.back-link:hover{background:var(--ocean-light);border-color:var(--ocean)}
+.page-header h1{
+  font-family:var(--font-display);font-size:clamp(1.6rem,4vw,2.2rem);
+  font-weight:700;color:var(--ocean-deep);line-height:1.2;margin-bottom:6px;
+}
+.page-header p{font-size:.88rem;color:var(--driftwood)}
+.header-deco{
+  position:absolute;top:12px;right:20px;font-size:2.5rem;opacity:.12;color:var(--ocean);
+}
+
+/* ── CONTENT ── */
+.content{max-width:720px;margin:0 auto;padding:28px 20px 80px}
+
+.rule-section{
+  background:var(--white);border-radius:18px;padding:24px;
+  margin-bottom:18px;border:2px solid transparent;
+  box-shadow:0 2px 12px rgba(0,0,0,.04);
+  transition:all .25s ease;
+}
+.rule-section:hover{border-color:var(--ocean);box-shadow:0 4px 20px rgba(58,156,191,.1)}
+
+.section-header{
+  display:flex;align-items:center;gap:12px;margin-bottom:14px;
+  padding-bottom:12px;border-bottom:2px dashed var(--sand-dark);
+}
+.section-icon{
+  width:44px;height:44px;border-radius:12px;display:flex;
+  align-items:center;justify-content:center;font-size:1.1rem;color:#fff;flex-shrink:0;
+}
+.section-title{
+  font-family:var(--font-display);font-size:1.1rem;font-weight:700;
+  color:var(--charcoal);
+}
+
+.rule-list{list-style:none}
+.rule-list li{
+  padding:8px 0 8px 24px;position:relative;font-size:.88rem;
+  color:var(--warm-gray);border-bottom:1px solid var(--sand);
+}
+.rule-list li:last-child{border-bottom:none}
+.rule-list li::before{
+  content:'\f00c';font-family:'Font Awesome 6 Free';font-weight:900;
+  position:absolute;left:0;color:var(--ocean);font-size:.7rem;top:10px;
+}
+
+/* WiFi box */
+.wifi-box{
+  background:linear-gradient(135deg,var(--ocean-light),#d4eef7);
+  border-radius:14px;padding:20px;text-align:center;margin:12px 0 4px;
+  border:2px dashed var(--ocean);
+}
+.wifi-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ocean-deep);font-weight:600;margin-bottom:4px}
+.wifi-value{font-size:1.3rem;font-weight:700;color:var(--charcoal);font-family:monospace;letter-spacing:.05em}
+.wifi-row{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.wifi-item{flex:1;min-width:180px}
+
+/* Emergency */
+.emergency-box{
+  background:linear-gradient(135deg,#fef3f0,#ffe8e0);
+  border-radius:14px;padding:16px 20px;margin-top:10px;
+  border:2px solid #f5c6b8;
+}
+.emergency-box p{font-size:.82rem;color:var(--warm-gray);margin-bottom:4px}
+.emergency-box strong{color:var(--charcoal)}
+
+/* ── FOOTER WAVE ── */
+.page-footer{
+  position:relative;height:100px;overflow:hidden;margin-top:20px;
+}
+.footer-wave{
+  position:absolute;bottom:40px;left:0;right:0;height:50px;overflow:hidden;
+}
+.footer-wave svg{position:absolute;bottom:0;width:200%;animation:waveSlide 6s linear infinite}
+.footer-sand{
+  position:absolute;bottom:0;left:0;right:0;height:45px;
+  background:linear-gradient(180deg,#e8d5b5,#dcc9a3);
+}
+@keyframes waveSlide{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  .content{padding:18px 14px 60px}
+  .rule-section{padding:18px 16px}
+  .wifi-row{flex-direction:column;gap:10px}
+}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="header-deco"><i class="fa-solid fa-house-chimney"></i></div>
+  <a href="index.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to Map</a>
+  <h1>House Rules & Info</h1>
+  <p>Everything you need to know about your stay at Kaiser Villa</p>
+</div>
+
+<div class="content">
+
+  <!-- WiFi -->
+  <div class="rule-section">
+    <div class="section-header">
+      <div class="section-icon" style="background:var(--ocean)"><i class="fa-solid fa-wifi"></i></div>
+      <div class="section-title">WiFi</div>
+    </div>
+    <div class="wifi-box">
+      <div class="wifi-row">
+        <div class="wifi-item">
+          <div class="wifi-label">Network Name</div>
+          <div class="wifi-value">KaiserVilla_Guest</div>
+        </div>
+        <div class="wifi-item">
+          <div class="wifi-label">Password</div>
+          <div class="wifi-value">welcome2opatija</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Check-in / Check-out -->
+  <div class="rule-section">
+    <div class="section-header">
+      <div class="section-icon" style="background:var(--terra)"><i class="fa-solid fa-clock"></i></div>
+      <div class="section-title">Check-in & Check-out</div>
+    </div>
+    <ul class="rule-list">
+      <li>Check-in from <strong>3:00 PM</strong> onwards</li>
+      <li>Check-out by <strong>10:00 AM</strong></li>
+      <li>Early check-in or late check-out may be possible -- just ask!</li>
+      <li>Key lockbox code will be shared before arrival</li>
+    </ul>
+  </div>
+
+  <!-- Kitchen -->
+  <div class="rule-section">
+    <div class="section-header">
+      <div class="section-icon" style="background:#6d8c5e"><i class="fa-solid fa-kitchen-set"></i></div>
+      <div class="section-title">Kitchen</div>
+    </div>
+    <ul class="rule-list">
+      <li>Feel free to use all kitchen appliances, pots, pans, and utensils</li>
+      <li>Coffee machine: Nespresso -- complimentary pods in the drawer</li>
+      <li>Please wash dishes after use or load the dishwasher</li>
+      <li>Basic spices, oil, and salt are provided</li>
+      <li>Nearest supermarket: Studenac (2km) or Plodine in Brsec (4km)</li>
+    </ul>
+  </div>
+
+  <!-- Bathroom -->
+  <div class="rule-section">
+    <div class="section-header">
+      <div class="section-icon" style="background:#8b6baf"><i class="fa-solid fa-bath"></i></div>
+      <div class="section-title">Bathroom & Towels</div>
+    </div>
+    <ul class="rule-list">
+      <li>Fresh towels are provided -- please hang them up to reuse when possible</li>
+      <li>Extra towels and bedding in the hallway closet</li>
+      <li>Beach towels are in the blue bag by the door -- please take them to the beach!</li>
+      <li>Hair dryer is under the sink</li>
+    </ul>
+  </div>
+
+  <!-- Parking & Transport -->
+  <div class="rule-section">
+    <div class="section-header">
+      <div class="section-icon" style="background:var(--driftwood)"><i class="fa-solid fa-car"></i></div>
+      <div class="section-title">Parking & Getting Around</div>
+    </div>
+    <ul class="rule-list">
+      <li>Free private parking spot right in front of the house</li>
+      <li>The roads around Zagore are narrow -- drive carefully, especially at night</li>
+      <li>Nearest bus stop: 1km walk (line 32 runs along the coast)</li>
+      <li>We recommend renting a car for exploring the Riviera</li>
+    </ul>
+  </div>
+
+  <!-- Quiet Hours -->
+  <div class="rule-section">
+    <div class="section-header">
+      <div class="section-icon" style="background:#e0976b"><i class="fa-solid fa-moon"></i></div>
+      <div class="section-title">Quiet Hours & Neighbours</div>
+    </div>
+    <ul class="rule-list">
+      <li>Quiet hours: <strong>10:00 PM -- 8:00 AM</strong></li>
+      <li>We have friendly neighbours -- please keep noise to a minimum in the evenings</li>
+      <li>Music on the terrace is fine during the day at a reasonable volume</li>
+      <li>No parties or events without prior arrangement</li>
+    </ul>
+  </div>
+
+  <!-- General Rules -->
+  <div class="rule-section">
+    <div class="section-header">
+      <div class="section-icon" style="background:var(--ocean-deep)"><i class="fa-solid fa-clipboard-list"></i></div>
+      <div class="section-title">General House Rules</div>
+    </div>
+    <ul class="rule-list">
+      <li>No smoking inside the house (terrace is fine!)</li>
+      <li>Pets are welcome -- please let us know in advance</li>
+      <li>Please take off shoes at the entrance</li>
+      <li>Air conditioning: feel free to use it, but please turn it off when leaving</li>
+      <li>Recycling bins are outside: paper, plastic, glass, and general waste</li>
+      <li>Please leave the house as you found it</li>
+    </ul>
+  </div>
+
+  <!-- Emergency -->
+  <div class="rule-section">
+    <div class="section-header">
+      <div class="section-icon" style="background:#e05555"><i class="fa-solid fa-phone"></i></div>
+      <div class="section-title">Emergency & Contacts</div>
+    </div>
+    <div class="emergency-box">
+      <p><strong>Emergency (Police/Fire/Ambulance):</strong> 112</p>
+      <p><strong>Your Host:</strong> +385 XX XXX XXXX</p>
+      <p><strong>Nearest Hospital:</strong> Opatija General Hospital (~25km)</p>
+      <p><strong>Nearest Pharmacy:</strong> Brsec (~4km)</p>
+    </div>
+    <ul class="rule-list" style="margin-top:12px">
+      <li>First aid kit is in the kitchen drawer</li>
+      <li>Fire extinguisher is in the hallway</li>
+      <li>Don't hesitate to call your host for anything -- we're happy to help!</li>
+    </ul>
+  </div>
+
+</div>
+
+<div class="page-footer">
+  <div class="footer-wave">
+    <svg viewBox="0 0 2880 60" preserveAspectRatio="none" fill="rgba(58,156,191,.4)">
+      <path d="M0,30 C360,55 720,10 1080,35 C1440,55 1800,10 2160,35 C2520,55 2880,10 2880,35 L2880,60 L0,60Z"/>
+    </svg>
+  </div>
+  <div class="footer-sand"></div>
+</div>
+
+</body>
+</html>

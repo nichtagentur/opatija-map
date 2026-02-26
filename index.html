@@ -69,6 +69,14 @@ html,body{height:100%;font-family:var(--font-body);background:var(--sand);color:
   position:absolute;top:10px;right:16px;font-size:2.2rem;opacity:.15;
   color:var(--ocean);
 }
+.sidebar-links{display:flex;gap:8px;margin-top:10px}
+.sidebar-link{
+  font-size:.7rem;color:var(--ocean-deep);text-decoration:none;font-weight:500;
+  padding:4px 10px;border-radius:14px;border:1.5px solid var(--sand-dark);
+  display:flex;align-items:center;gap:4px;transition:all .2s ease;
+  background:rgba(255,255,255,.5);
+}
+.sidebar-link:hover{background:var(--ocean-light);border-color:var(--ocean)}
 
 /* ── FILTERS ── */
 .filters{
@@ -319,6 +327,18 @@ html,body{height:100%;font-family:var(--font-body);background:var(--sand);color:
   box-shadow:0 4px 20px rgba(58,156,191,.35);letter-spacing:.02em;
 }
 .welcome-btn:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 8px 30px rgba(58,156,191,.5);background:var(--ocean-deep)}
+.welcome-links{
+  display:flex;align-items:center;justify-content:center;gap:16px;margin-top:16px;
+}
+.welcome-link{
+  font-size:.82rem;color:var(--ocean-deep);text-decoration:none;
+  font-weight:500;display:flex;align-items:center;gap:5px;
+  padding:6px 14px;border-radius:20px;transition:all .25s ease;
+  border:1.5px solid var(--sand-dark);background:var(--white);
+}
+.welcome-link:hover{background:var(--ocean-light);border-color:var(--ocean);transform:translateY(-1px)}
+.welcome-link i{font-size:.75rem}
+.welcome-link-divider{width:1px;height:18px;background:var(--sand-dark)}
 
 /* Beach / Sand bottom */
 .welcome-beach{
@@ -429,7 +449,7 @@ html,body{height:100%;font-family:var(--font-body);background:var(--sand);color:
     <div class="welcome-features">
       <div class="welcome-feat">
         <div class="welcome-feat-icon" style="background:var(--beach-blue)"><i class="fa-solid fa-umbrella-beach"></i></div>
-        7 Beaches
+        8 Beaches
       </div>
       <div class="welcome-feat">
         <div class="welcome-feat-icon" style="background:var(--restaurant-terra)"><i class="fa-solid fa-utensils"></i></div>
@@ -447,6 +467,11 @@ html,body{height:100%;font-family:var(--font-body);background:var(--sand);color:
     <button class="welcome-btn" onclick="dismissWelcome()">
       <i class="fa-solid fa-map-location-dot"></i>&ensp;Explore the Map
     </button>
+    <div class="welcome-links">
+      <a href="house-rules.html" class="welcome-link"><i class="fa-solid fa-house-chimney"></i> House Rules</a>
+      <span class="welcome-link-divider"></span>
+      <a href="guestbook.html" class="welcome-link"><i class="fa-solid fa-book-open"></i> Guestbook</a>
+    </div>
   </div>
 
   <div class="welcome-beach">
@@ -481,6 +506,10 @@ html,body{height:100%;font-family:var(--font-body);background:var(--sand);color:
       <div class="header-deco"><i class="fa-solid fa-sun"></i></div>
       <h1>Kaiser Villa Guide</h1>
       <p>Your guide to things to do around the Airbnb</p>
+      <div class="sidebar-links">
+        <a href="house-rules.html" class="sidebar-link"><i class="fa-solid fa-house-chimney"></i> House Rules</a>
+        <a href="guestbook.html" class="sidebar-link"><i class="fa-solid fa-book-open"></i> Guestbook</a>
+      </div>
     </div>
 
     <div class="filters" id="filters">
@@ -561,6 +590,10 @@ const POIS = [
     desc: 'Opatija\'s main beach. Blue Flag certified. 400m with all amenities, restaurants, and nightlife nearby.',
     distance: '~25km, 30 min drive',
     img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Opatija_-_pla%C5%BEe.jpg/600px-Opatija_-_pla%C5%BEe.jpg' },
+  { id: 'b7', name: 'Bobina Beach', cat: 'beach', lat: 45.13514, lng: 14.21452, icon: 'fa-umbrella-beach',
+    desc: 'A lovely secluded beach south of Zagore. Beautiful rocky coastline with turquoise waters. Great for snorkelling and peaceful swimming.',
+    distance: '~3km, 5 min drive',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Kvarner_bay.jpg/600px-Kvarner_bay.jpg' },
 
   // RESTAURANTS
   { id: 'r1', name: 'Konoba Zijavica', cat: 'restaurant', lat: 45.231, lng: 14.247, icon: 'fa-utensils',
