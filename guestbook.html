@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guestbook - Kaiser Villa Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ocean:#3a9cbf;--ocean-deep:#1f7a9a;--ocean-light:#eaf6fa;
+  --terra:#d4845a;--terra-light:#faf0e8;
+  --sand:#f5ece0;--sand-dark:#ddd0bc;
+  --driftwood:#a89279;--driftwood-light:#f8f3ec;
+  --white:#fdfaf6;--charcoal:#3a3530;--warm-gray:#7d756d;
+  --font-display:'Libre Baskerville',Georgia,serif;
+  --font-body:'Outfit','Segoe UI',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font-body);background:var(--sand);color:var(--charcoal);
+  min-height:100vh;line-height:1.6;
+}
+
+/* ── HEADER ── */
+.page-header{
+  background:linear-gradient(160deg,#f5ece0 0%,#efe3d0 50%,#e8d9c4 100%);
+  padding:32px 24px 28px;text-align:center;position:relative;overflow:hidden;
+  border-bottom:3px solid var(--sand-dark);
+}
+.page-header::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
+  background:repeating-linear-gradient(90deg,var(--ocean) 0,var(--ocean) 8px,transparent 8px,transparent 14px);
+  opacity:.4;
+}
+.back-link{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.78rem;color:var(--ocean-deep);text-decoration:none;
+  font-weight:500;margin-bottom:14px;padding:5px 14px;border-radius:20px;
+  border:1.5px solid var(--sand-dark);background:rgba(255,255,255,.5);
+  transition:all .2s ease;
+}
+.back-link:hover{background:var(--ocean-light);border-color:var(--ocean)}
+.page-header h1{
+  font-family:var(--font-display);font-size:clamp(1.6rem,4vw,2.2rem);
+  font-weight:700;color:var(--ocean-deep);line-height:1.2;margin-bottom:6px;
+}
+.page-header p{font-size:.88rem;color:var(--driftwood)}
+.header-deco{
+  position:absolute;top:12px;right:20px;font-size:2.5rem;opacity:.12;color:var(--ocean);
+}
+
+/* ── CONTENT ── */
+.content{max-width:720px;margin:0 auto;padding:28px 20px 80px}
+
+/* ── FORM ── */
+.form-card{
+  background:var(--white);border-radius:18px;padding:24px;
+  margin-bottom:28px;border:2px solid var(--sand-dark);
+  box-shadow:0 2px 12px rgba(0,0,0,.04);
+}
+.form-card h2{
+  font-family:var(--font-display);font-size:1.15rem;font-weight:700;
+  color:var(--charcoal);margin-bottom:16px;
+}
+
+.form-group{margin-bottom:16px}
+.form-label{
+  display:block;font-size:.78rem;font-weight:600;color:var(--warm-gray);
+  margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em;
+}
+.form-input,.form-textarea{
+  width:100%;padding:11px 14px;border:2px solid var(--sand-dark);
+  border-radius:12px;font-family:var(--font-body);font-size:.9rem;
+  color:var(--charcoal);background:var(--white);transition:border-color .2s;
+  outline:none;
+}
+.form-input:focus,.form-textarea:focus{border-color:var(--ocean)}
+.form-textarea{resize:vertical;min-height:100px}
+
+/* Stars */
+.star-rating{display:flex;gap:6px;flex-direction:row-reverse;justify-content:flex-end}
+.star-rating input{display:none}
+.star-rating label{
+  font-size:1.6rem;color:var(--sand-dark);cursor:pointer;
+  transition:color .15s,transform .15s;
+}
+.star-rating label:hover,
+.star-rating label:hover~label,
+.star-rating input:checked~label{color:#f5b731}
+.star-rating label:hover{transform:scale(1.15)}
+
+/* Photo upload */
+.photo-upload{
+  border:2px dashed var(--sand-dark);border-radius:12px;padding:20px;
+  text-align:center;cursor:pointer;transition:all .2s;position:relative;
+  overflow:hidden;
+}
+.photo-upload:hover{border-color:var(--ocean);background:var(--ocean-light)}
+.photo-upload input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.photo-upload i{font-size:1.5rem;color:var(--driftwood);margin-bottom:6px}
+.photo-upload p{font-size:.78rem;color:var(--warm-gray)}
+.photo-preview{
+  display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;
+}
+.photo-preview img{
+  width:80px;height:80px;object-fit:cover;border-radius:10px;
+  border:2px solid var(--sand-dark);
+}
+
+.submit-btn{
+  width:100%;border:none;padding:14px;border-radius:14px;
+  background:var(--ocean);color:#fff;font-family:var(--font-body);
+  font-size:.95rem;font-weight:600;cursor:pointer;
+  transition:all .3s ease;display:flex;align-items:center;
+  justify-content:center;gap:8px;
+}
+.submit-btn:hover{background:var(--ocean-deep);transform:translateY(-1px);box-shadow:0 4px 16px rgba(58,156,191,.3)}
+.submit-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+/* ── ENTRIES ── */
+.entries-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:16px;
+}
+.entries-header h2{
+  font-family:var(--font-display);font-size:1.15rem;font-weight:700;
+  color:var(--charcoal);
+}
+.entry-count{
+  font-size:.75rem;background:var(--ocean-light);color:var(--ocean-deep);
+  padding:3px 12px;border-radius:12px;font-weight:600;
+}
+
+.entry-card{
+  background:var(--white);border-radius:18px;padding:20px;
+  margin-bottom:14px;border:2px solid transparent;
+  box-shadow:0 2px 12px rgba(0,0,0,.04);
+  transition:all .25s ease;animation:fadeInUp .4s ease;
+}
+.entry-card:hover{border-color:var(--ocean);box-shadow:0 4px 20px rgba(58,156,191,.1)}
+
+@keyframes fadeInUp{
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.entry-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.entry-name{font-weight:700;font-size:.95rem;color:var(--charcoal)}
+.entry-date{font-size:.7rem;color:var(--driftwood)}
+.entry-stars{color:#f5b731;font-size:.85rem;margin-bottom:8px}
+.entry-message{font-size:.86rem;color:var(--warm-gray);line-height:1.6}
+.entry-photos{
+  display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;
+}
+.entry-photos img{
+  width:100px;height:100px;object-fit:cover;border-radius:12px;
+  border:2px solid var(--sand-dark);cursor:pointer;transition:transform .2s;
+}
+.entry-photos img:hover{transform:scale(1.05)}
+
+.no-entries{
+  text-align:center;padding:40px 20px;color:var(--driftwood);
+}
+.no-entries i{font-size:2.5rem;margin-bottom:12px;display:block;opacity:.4}
+.no-entries p{font-size:.9rem}
+
+/* Lightbox */
+.lightbox{
+  position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.85);
+  display:none;align-items:center;justify-content:center;cursor:pointer;
+}
+.lightbox.active{display:flex}
+.lightbox img{max-width:90vw;max-height:90vh;border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,.5)}
+
+/* Success toast */
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);
+  background:var(--ocean-deep);color:#fff;padding:12px 24px;border-radius:14px;
+  font-size:.85rem;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.2);
+  transition:transform .4s ease;z-index:5000;display:flex;align-items:center;gap:8px;
+}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* ── FOOTER WAVE ── */
+.page-footer{position:relative;height:100px;overflow:hidden;margin-top:20px}
+.footer-wave{position:absolute;bottom:40px;left:0;right:0;height:50px;overflow:hidden}
+.footer-wave svg{position:absolute;bottom:0;width:200%;animation:waveSlide 6s linear infinite}
+.footer-sand{position:absolute;bottom:0;left:0;right:0;height:45px;background:linear-gradient(180deg,#e8d5b5,#dcc9a3)}
+@keyframes waveSlide{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+@media(max-width:600px){
+  .content{padding:18px 14px 60px}
+  .form-card{padding:18px 16px}
+  .entry-photos img{width:80px;height:80px}
+}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="header-deco"><i class="fa-solid fa-book-open"></i></div>
+  <a href="index.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to Map</a>
+  <h1>Guest Book</h1>
+  <p>Share your favourite moments, tips, and photos from your stay</p>
+</div>
+
+<div class="content">
+
+  <!-- Entry Form -->
+  <div class="form-card">
+    <h2><i class="fa-solid fa-pen-fancy" style="color:var(--ocean);margin-right:8px"></i>Leave a Message</h2>
+    <form id="guestForm" onsubmit="submitEntry(event)">
+      <div class="form-group">
+        <label class="form-label">Your Name</label>
+        <input type="text" class="form-input" id="nameInput" placeholder="e.g. Maria & Jan from Berlin" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Your Rating</label>
+        <div class="star-rating">
+          <input type="radio" name="rating" id="s5" value="5"><label for="s5"><i class="fa-solid fa-star"></i></label>
+          <input type="radio" name="rating" id="s4" value="4"><label for="s4"><i class="fa-solid fa-star"></i></label>
+          <input type="radio" name="rating" id="s3" value="3" checked><label for="s3"><i class="fa-solid fa-star"></i></label>
+          <input type="radio" name="rating" id="s2" value="2"><label for="s2"><i class="fa-solid fa-star"></i></label>
+          <input type="radio" name="rating" id="s1" value="1"><label for="s1"><i class="fa-solid fa-star"></i></label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Your Message / Tips</label>
+        <textarea class="form-textarea" id="messageInput" placeholder="Tell future guests about your favourite spots, tips, or memories..." required></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Photos (optional)</label>
+        <div class="photo-upload" id="photoUpload">
+          <i class="fa-solid fa-camera"></i>
+          <p>Click or drag photos here</p>
+          <input type="file" id="photoInput" accept="image/*" multiple onchange="handlePhotos(this.files)">
+        </div>
+        <div class="photo-preview" id="photoPreview"></div>
+      </div>
+      <button type="submit" class="submit-btn" id="submitBtn">
+        <i class="fa-solid fa-paper-plane"></i> Post to Guestbook
+      </button>
+    </form>
+  </div>
+
+  <!-- Entries -->
+  <div class="entries-header">
+    <h2>Previous Guests</h2>
+    <span class="entry-count" id="entryCount">0 entries</span>
+  </div>
+  <div id="entriesList"></div>
+
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="this.classList.remove('active')">
+  <img id="lightboxImg" src="" alt="Guest photo">
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"><i class="fa-solid fa-check-circle"></i> <span id="toastMsg"></span></div>
+
+<div class="page-footer">
+  <div class="footer-wave">
+    <svg viewBox="0 0 2880 60" preserveAspectRatio="none" fill="rgba(58,156,191,.4)">
+      <path d="M0,30 C360,55 720,10 1080,35 C1440,55 1800,10 2160,35 C2520,55 2880,10 2880,35 L2880,60 L0,60Z"/>
+    </svg>
+  </div>
+  <div class="footer-sand"></div>
+</div>
+
+<script>
+// ── STORAGE ──
+const STORAGE_KEY = 'kaiser_villa_guestbook';
+let selectedPhotos = [];
+
+function getEntries() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+  } catch { return []; }
+}
+
+function saveEntries(entries) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+}
+
+// ── PHOTOS ──
+function handlePhotos(files) {
+  const preview = document.getElementById('photoPreview');
+  Array.from(files).forEach(file => {
+    if (!file.type.startsWith('image/') || selectedPhotos.length >= 4) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      // Resize for storage efficiency
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const maxW = 800;
+        const scale = Math.min(1, maxW / img.width);
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+        selectedPhotos.push(dataUrl);
+        const thumb = document.createElement('img');
+        thumb.src = dataUrl;
+        preview.appendChild(thumb);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// ── SUBMIT ──
+function submitEntry(e) {
+  e.preventDefault();
+  const name = document.getElementById('nameInput').value.trim();
+  const message = document.getElementById('messageInput').value.trim();
+  const rating = document.querySelector('input[name="rating"]:checked')?.value || 5;
+  if (!name || !message) return;
+
+  const entry = {
+    id: Date.now(),
+    name,
+    message,
+    rating: parseInt(rating),
+    photos: selectedPhotos.slice(0, 4),
+    date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+  };
+
+  const entries = getEntries();
+  entries.unshift(entry);
+  saveEntries(entries);
+
+  // Reset form
+  document.getElementById('guestForm').reset();
+  document.getElementById('photoPreview').innerHTML = '';
+  selectedPhotos = [];
+  document.getElementById('s5').checked = true;
+
+  renderEntries();
+  showToast('Thanks for signing the guestbook!');
+}
+
+// ── RENDER ──
+function renderEntries() {
+  const entries = getEntries();
+  const list = document.getElementById('entriesList');
+  document.getElementById('entryCount').textContent = entries.length + (entries.length === 1 ? ' entry' : ' entries');
+
+  if (!entries.length) {
+    list.innerHTML = `
+      <div class="no-entries">
+        <i class="fa-solid fa-book-open"></i>
+        <p>No entries yet -- be the first to sign the guestbook!</p>
+      </div>`;
+    return;
+  }
+
+  list.innerHTML = entries.map(e => `
+    <div class="entry-card">
+      <div class="entry-top">
+        <span class="entry-name">${esc(e.name)}</span>
+        <span class="entry-date">${esc(e.date)}</span>
+      </div>
+      <div class="entry-stars">${'<i class="fa-solid fa-star"></i>'.repeat(e.rating)}${'<i class="fa-regular fa-star"></i>'.repeat(5 - e.rating)}</div>
+      <div class="entry-message">${esc(e.message)}</div>
+      ${e.photos && e.photos.length ? `
+        <div class="entry-photos">
+          ${e.photos.map(p => `<img src="${p}" alt="Guest photo" onclick="openLightbox(this.src)">`).join('')}
+        </div>` : ''}
+    </div>
+  `).join('');
+}
+
+function esc(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+// ── LIGHTBOX ──
+function openLightbox(src) {
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightbox').classList.add('active');
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ── SEED SAMPLE ENTRIES ──
+function seedSampleEntries() {
+  const entries = getEntries();
+  if (entries.length > 0) return;
+
+  const samples = [
+    {
+      id: 1,
+      name: 'Sophie & Thomas from Munich',
+      message: 'What an incredible stay! The view from the terrace is breathtaking. Our top tip: visit Brsec Beach early in the morning -- you\'ll have it almost to yourself. Konoba Zijavica was the best meal of our entire trip. We\'ll definitely be back!',
+      rating: 5,
+      photos: [],
+      date: '12 Jan 2026'
+    },
+    {
+      id: 2,
+      name: 'The Anderson Family, London',
+      message: 'Perfect base for exploring the Riviera with kids. Medveja Beach was great for the children. The 753 Steps hike was a highlight -- exhausting but worth it! Make sure to try the ice cream in Moscenicka Draga.',
+      rating: 5,
+      photos: [],
+      date: '28 Nov 2025'
+    },
+    {
+      id: 3,
+      name: 'Marco & Lucia, Rome',
+      message: 'Bellissimo! As Italians we have high standards for food and this area did not disappoint. Plavi Podrum in Volosko is absolutely worth the drive. The house was spotless and the hosts were lovely. Highly recommend the Lungomare walk at sunset.',
+      rating: 5,
+      photos: [],
+      date: '15 Sep 2025'
+    }
+  ];
+
+  saveEntries(samples);
+}
+
+// ── INIT ──
+seedSampleEntries();
+renderEntries();
+</script>
+</body>
+</html>
