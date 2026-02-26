@@ -6,24 +6,25 @@
 <title>Kaiser Villa Guide</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --ocean:#1a6b8a;--ocean-deep:#0e4a5e;--ocean-light:#e8f4f8;
-  --terra:#c4623a;--terra-light:#f5e6df;
-  --sand:#f0e5d3;--sand-dark:#d4c4a8;
-  --olive:#5a7247;--olive-light:#e8f0e3;
-  --grape:#7b5ea7;--grape-light:#efe8f8;
-  --white:#fefcf9;--charcoal:#2c2824;--warm-gray:#6b6560;
-  --beach-blue:#2196F3;--restaurant-terra:#E8713A;
-  --hike-green:#4CAF50;--attraction-purple:#9C5EC7;
+  --ocean:#3a9cbf;--ocean-deep:#1f7a9a;--ocean-light:#eaf6fa;
+  --terra:#d4845a;--terra-light:#faf0e8;
+  --sand:#f5ece0;--sand-dark:#ddd0bc;
+  --olive:#6d8c5e;--olive-light:#edf3e8;
+  --grape:#8b6baf;--grape-light:#f3edf8;
+  --driftwood:#a89279;--driftwood-light:#f8f3ec;
+  --white:#fdfaf6;--charcoal:#3a3530;--warm-gray:#7d756d;
+  --beach-blue:#42a5c5;--restaurant-terra:#d4845a;
+  --hike-green:#6d8c5e;--attraction-purple:#8b6baf;
   --sidebar-w:380px;
-  --font-display:'Playfair Display',Georgia,serif;
-  --font-body:'DM Sans','Segoe UI',sans-serif;
+  --font-display:'Libre Baskerville',Georgia,serif;
+  --font-body:'Outfit','Segoe UI',sans-serif;
 }
-html,body{height:100%;font-family:var(--font-body);background:var(--charcoal);color:var(--charcoal);overflow:hidden}
+html,body{height:100%;font-family:var(--font-body);background:var(--sand);color:var(--charcoal);overflow:hidden}
 
 /* ── LAYOUT ── */
 .app{display:flex;height:100vh;width:100vw;position:relative}
@@ -33,52 +34,56 @@ html,body{height:100%;font-family:var(--font-body);background:var(--charcoal);co
 .sidebar{
   width:var(--sidebar-w);height:100%;background:var(--white);
   display:flex;flex-direction:column;z-index:1000;
-  box-shadow:4px 0 30px rgba(0,0,0,.12);
+  box-shadow:4px 0 30px rgba(0,0,0,.1);
   transition:transform .4s cubic-bezier(.4,0,.2,1);
   position:relative;overflow:hidden;
+  border-right:3px solid var(--sand-dark);
 }
 .sidebar::before{
   content:'';position:absolute;bottom:0;left:0;right:0;height:120px;
-  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 120'%3E%3Cpath fill='%231a6b8a' fill-opacity='.06' d='M0,64L48,58.7C96,53,192,43,288,48C384,53,480,75,576,80C672,85,768,75,864,64C960,53,1056,43,1152,48C1248,53,1344,75,1392,85.3L1440,96L1440,120L0,120Z'/%3E%3C/svg%3E") no-repeat bottom;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 120'%3E%3Cpath fill='%233a9cbf' fill-opacity='.05' d='M0,64L48,58.7C96,53,192,43,288,48C384,53,480,75,576,80C672,85,768,75,864,64C960,53,1056,43,1152,48C1248,53,1344,75,1392,85.3L1440,96L1440,120L0,120Z'/%3E%3C/svg%3E") no-repeat bottom;
   background-size:cover;pointer-events:none;opacity:.7;
 }
 .sidebar.collapsed{transform:translateX(calc(-1 * var(--sidebar-w)))}
 
 .sidebar-header{
   padding:28px 24px 20px;
-  background:linear-gradient(135deg,var(--ocean-deep) 0%,var(--ocean) 100%);
-  color:#fff;position:relative;overflow:hidden;flex-shrink:0;
+  background:linear-gradient(160deg,#f5ece0 0%,#efe3d0 50%,#e8d9c4 100%);
+  color:var(--charcoal);position:relative;overflow:hidden;flex-shrink:0;
+  border-bottom:3px solid var(--sand-dark);
 }
 .sidebar-header::after{
-  content:'';position:absolute;bottom:-20px;left:-20px;right:-20px;height:60px;
-  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 60'%3E%3Cpath fill='%23fefcf9' d='M0,30 C360,60 720,0 1080,30 C1260,45 1380,20 1440,30 L1440,60 L0,60Z'/%3E%3C/svg%3E") no-repeat bottom;
-  background-size:cover;
+  content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
+  background:repeating-linear-gradient(90deg,var(--ocean) 0,var(--ocean) 8px,transparent 8px,transparent 14px);
+  opacity:.4;
 }
 .sidebar-header h1{
-  font-family:var(--font-display);font-size:1.65rem;font-weight:700;
+  font-family:var(--font-display);font-size:1.5rem;font-weight:700;
   line-height:1.15;letter-spacing:-.01em;margin-bottom:6px;
+  color:var(--ocean-deep);
 }
 .sidebar-header p{
-  font-size:.82rem;opacity:.85;line-height:1.4;font-weight:400;
+  font-size:.82rem;color:var(--driftwood);line-height:1.4;font-weight:400;
 }
 .header-deco{
-  position:absolute;top:12px;right:16px;font-size:2.8rem;opacity:.12;
-  font-family:var(--font-display);font-style:italic;
+  position:absolute;top:10px;right:16px;font-size:2.2rem;opacity:.15;
+  color:var(--ocean);
 }
 
 /* ── FILTERS ── */
 .filters{
-  display:flex;gap:6px;padding:16px 18px 12px;flex-wrap:wrap;flex-shrink:0;
-  border-bottom:1px solid rgba(0,0,0,.06);
+  display:flex;gap:6px;padding:14px 18px 12px;flex-wrap:wrap;flex-shrink:0;
+  border-bottom:2px dashed var(--sand-dark);
+  background:var(--driftwood-light);
 }
 .filter-btn{
-  border:none;padding:7px 14px;border-radius:20px;font-size:.76rem;
-  font-family:var(--font-body);font-weight:600;cursor:pointer;
+  border:2px solid var(--sand-dark);padding:7px 14px;border-radius:24px;font-size:.76rem;
+  font-family:var(--font-body);font-weight:500;cursor:pointer;
   transition:all .25s ease;display:flex;align-items:center;gap:5px;
-  background:var(--sand);color:var(--warm-gray);letter-spacing:.02em;
+  background:var(--white);color:var(--warm-gray);letter-spacing:.02em;
 }
-.filter-btn:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.1)}
-.filter-btn.active{color:#fff;transform:translateY(-1px);box-shadow:0 3px 12px rgba(0,0,0,.2)}
+.filter-btn:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.08);border-color:var(--ocean)}
+.filter-btn.active{color:#fff;transform:translateY(-1px);box-shadow:0 3px 12px rgba(0,0,0,.15);border-color:transparent}
 .filter-btn.active[data-cat="all"]{background:var(--ocean)}
 .filter-btn.active[data-cat="beach"]{background:var(--beach-blue)}
 .filter-btn.active[data-cat="restaurant"]{background:var(--restaurant-terra)}
@@ -95,21 +100,22 @@ html,body{height:100%;font-family:var(--font-body);background:var(--charcoal);co
 .poi-list::-webkit-scrollbar-thumb{background:var(--sand-dark);border-radius:4px}
 
 .poi-card{
-  padding:14px 16px;border-radius:12px;cursor:pointer;
-  transition:all .25s ease;margin-bottom:6px;
-  border:1.5px solid transparent;position:relative;
+  padding:14px 16px;border-radius:14px;cursor:pointer;
+  transition:all .25s ease;margin-bottom:8px;
+  border:2px solid transparent;position:relative;
   display:flex;align-items:flex-start;gap:12px;
+  background:var(--driftwood-light);
 }
 .poi-card:hover{
-  background:var(--ocean-light);border-color:rgba(26,107,138,.15);
-  transform:translateX(4px);
+  background:var(--ocean-light);border-color:var(--ocean);
+  transform:translateX(3px);
 }
 .poi-card.active-card{
   background:var(--ocean-light);border-color:var(--ocean);
-  box-shadow:0 2px 12px rgba(26,107,138,.15);
+  box-shadow:0 2px 12px rgba(58,156,191,.18);
 }
 .poi-icon{
-  width:38px;height:38px;border-radius:10px;display:flex;
+  width:40px;height:40px;border-radius:12px;display:flex;
   align-items:center;justify-content:center;flex-shrink:0;
   font-size:.95rem;color:#fff;
 }
@@ -134,7 +140,7 @@ html,body{height:100%;font-family:var(--font-body);background:var(--charcoal);co
 /* ── TIPS SECTION ── */
 .tips-section{
   flex-shrink:0;padding:14px 18px;
-  background:var(--sand);border-top:1px solid var(--sand-dark);
+  background:var(--sand);border-top:2px dashed var(--sand-dark);
   position:relative;z-index:2;
 }
 .tips-toggle{
@@ -246,33 +252,99 @@ html,body{height:100%;font-family:var(--font-body);background:var(--charcoal);co
 /* ── WELCOME OVERLAY ── */
 .welcome-overlay{
   position:fixed;inset:0;z-index:2000;
-  background:linear-gradient(135deg,var(--ocean-deep) 0%,var(--ocean) 40%,#2a8ab0 100%);
-  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(180deg,#87ceeb 0%,#5bb8d4 35%,#3a9cbf 60%,#1f7a9a 100%);
+  display:flex;align-items:center;justify-content:center;flex-direction:column;
   opacity:1;transition:opacity .8s ease;pointer-events:all;
+  overflow:hidden;
 }
 .welcome-overlay.hide{opacity:0;pointer-events:none}
-.welcome-content{text-align:center;color:#fff;max-width:520px;padding:30px}
+
+/* Sun */
+.welcome-sun{
+  position:absolute;top:8%;right:12%;width:120px;height:120px;
+  border-radius:50%;background:radial-gradient(circle,#ffe082 30%,#ffca28 70%,rgba(255,202,40,0) 100%);
+  box-shadow:0 0 80px 30px rgba(255,202,40,.35);
+  animation:sunGlow 4s ease-in-out infinite;
+}
+@keyframes sunGlow{0%,100%{box-shadow:0 0 80px 30px rgba(255,202,40,.35)}50%{box-shadow:0 0 100px 40px rgba(255,202,40,.5)}}
+
+/* Clouds */
+.welcome-cloud{position:absolute;opacity:.7}
+.welcome-cloud svg{fill:#fff;filter:drop-shadow(0 2px 4px rgba(0,0,0,.05))}
+.cloud-1{top:12%;left:5%;animation:cloudDrift 25s linear infinite}
+.cloud-2{top:20%;left:55%;animation:cloudDrift 35s linear infinite;opacity:.5;transform:scale(.7)}
+.cloud-3{top:8%;left:30%;animation:cloudDrift 30s linear infinite;opacity:.4;transform:scale(.5)}
+@keyframes cloudDrift{0%{transform:translateX(0)}100%{transform:translateX(100vw)}}
+
+.welcome-content{
+  text-align:center;color:var(--charcoal);max-width:560px;padding:30px;
+  position:relative;z-index:10;
+  background:rgba(253,250,246,.88);backdrop-filter:blur(12px);
+  border-radius:24px;border:3px solid var(--sand-dark);
+  box-shadow:0 12px 60px rgba(0,0,0,.12);
+  margin-bottom:80px;
+}
+.welcome-badge{
+  display:inline-block;font-size:.7rem;font-weight:600;text-transform:uppercase;
+  letter-spacing:.12em;color:var(--ocean);background:var(--ocean-light);
+  padding:5px 16px;border-radius:20px;margin-bottom:16px;
+  font-family:var(--font-body);
+}
 .welcome-content h1{
-  font-family:var(--font-display);font-size:clamp(2rem,5vw,3.2rem);
-  font-weight:700;line-height:1.1;margin-bottom:12px;
+  font-family:var(--font-display);font-size:clamp(1.8rem,5vw,2.8rem);
+  font-weight:700;line-height:1.15;margin-bottom:8px;color:var(--charcoal);
 }
-.welcome-content h1 em{font-style:italic;opacity:.85}
-.welcome-content p{font-size:1.05rem;opacity:.8;line-height:1.6;margin-bottom:32px}
+.welcome-content h1 em{font-style:italic;color:var(--ocean-deep)}
+.welcome-subtitle{
+  font-size:1rem;color:var(--driftwood);line-height:1.6;margin-bottom:8px;
+  font-weight:400;
+}
+.welcome-features{
+  display:flex;justify-content:center;gap:24px;margin:20px 0 24px;
+  flex-wrap:wrap;
+}
+.welcome-feat{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  font-size:.72rem;color:var(--warm-gray);font-weight:500;
+}
+.welcome-feat-icon{
+  width:48px;height:48px;border-radius:14px;display:flex;
+  align-items:center;justify-content:center;font-size:1.1rem;color:#fff;
+}
 .welcome-btn{
-  border:none;padding:14px 40px;border-radius:30px;
-  background:#fff;color:var(--ocean-deep);
-  font-family:var(--font-body);font-size:1rem;font-weight:700;
+  border:none;padding:16px 44px;border-radius:30px;
+  background:var(--ocean);color:#fff;
+  font-family:var(--font-body);font-size:1rem;font-weight:600;
   cursor:pointer;transition:all .3s ease;
-  box-shadow:0 4px 20px rgba(0,0,0,.2);letter-spacing:.02em;
+  box-shadow:0 4px 20px rgba(58,156,191,.35);letter-spacing:.02em;
 }
-.welcome-btn:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 8px 30px rgba(0,0,0,.3)}
+.welcome-btn:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 8px 30px rgba(58,156,191,.5);background:var(--ocean-deep)}
+
+/* Beach / Sand bottom */
+.welcome-beach{
+  position:absolute;bottom:0;left:0;right:0;height:140px;z-index:5;
+}
+.welcome-sand{
+  position:absolute;bottom:0;left:0;right:0;height:60px;
+  background:linear-gradient(180deg,#e8d5b5,#dcc9a3);
+}
+.welcome-sand::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:8px;
+  background:repeating-linear-gradient(90deg,transparent 0,transparent 20px,rgba(255,255,255,.3) 20px,rgba(255,255,255,.3) 22px);
+}
 .welcome-wave{
-  position:absolute;bottom:0;left:0;right:0;
-  height:100px;overflow:hidden;
+  position:absolute;bottom:55px;left:0;right:0;height:50px;overflow:hidden;
 }
 .welcome-wave svg{
   position:absolute;bottom:0;width:200%;
-  animation:waveSlide 8s linear infinite;
+  animation:waveSlide 6s linear infinite;
+}
+.welcome-wave2{
+  position:absolute;bottom:48px;left:0;right:0;height:50px;overflow:hidden;
+}
+.welcome-wave2 svg{
+  position:absolute;bottom:0;width:200%;
+  animation:waveSlide 8s linear infinite reverse;
 }
 @keyframes waveSlide{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
@@ -315,17 +387,50 @@ html,body{height:100%;font-family:var(--font-body);background:var(--charcoal);co
 
 <!-- Welcome Overlay -->
 <div class="welcome-overlay" id="welcome">
+  <div class="welcome-sun"></div>
+  <div class="welcome-cloud cloud-1"><svg width="140" height="50" viewBox="0 0 140 50"><ellipse cx="70" cy="30" rx="60" ry="20"/><ellipse cx="45" cy="22" rx="35" ry="18"/><ellipse cx="95" cy="22" rx="35" ry="18"/></svg></div>
+  <div class="welcome-cloud cloud-2"><svg width="140" height="50" viewBox="0 0 140 50"><ellipse cx="70" cy="30" rx="60" ry="20"/><ellipse cx="45" cy="22" rx="35" ry="18"/><ellipse cx="95" cy="22" rx="35" ry="18"/></svg></div>
+  <div class="welcome-cloud cloud-3"><svg width="140" height="50" viewBox="0 0 140 50"><ellipse cx="70" cy="30" rx="60" ry="20"/><ellipse cx="45" cy="22" rx="35" ry="18"/><ellipse cx="95" cy="22" rx="35" ry="18"/></svg></div>
+
   <div class="welcome-content">
-    <h1>Welcome to the<br><em>Kaiser Villa Guide</em></h1>
-    <p>Your local guide to the best beaches, restaurants, trails and hidden gems around your Airbnb.</p>
+    <div class="welcome-badge">Your Airbnb Guest Guide</div>
+    <h1>Welcome to<br><em>Kaiser Villa</em></h1>
+    <p class="welcome-subtitle">Everything you need for an amazing stay on the Opatija Riviera</p>
+    <div class="welcome-features">
+      <div class="welcome-feat">
+        <div class="welcome-feat-icon" style="background:var(--beach-blue)"><i class="fa-solid fa-umbrella-beach"></i></div>
+        7 Beaches
+      </div>
+      <div class="welcome-feat">
+        <div class="welcome-feat-icon" style="background:var(--restaurant-terra)"><i class="fa-solid fa-utensils"></i></div>
+        7 Restaurants
+      </div>
+      <div class="welcome-feat">
+        <div class="welcome-feat-icon" style="background:var(--hike-green)"><i class="fa-solid fa-person-hiking"></i></div>
+        5 Hikes
+      </div>
+      <div class="welcome-feat">
+        <div class="welcome-feat-icon" style="background:var(--attraction-purple)"><i class="fa-solid fa-landmark"></i></div>
+        7 Sights
+      </div>
+    </div>
     <button class="welcome-btn" onclick="dismissWelcome()">
-      <i class="fa-solid fa-compass"></i>&ensp;Start Exploring
+      <i class="fa-solid fa-map-location-dot"></i>&ensp;Explore the Map
     </button>
   </div>
-  <div class="welcome-wave">
-    <svg viewBox="0 0 2880 100" preserveAspectRatio="none" fill="rgba(255,255,255,.08)">
-      <path d="M0,40 C360,90 720,10 1080,50 C1440,90 1800,10 2160,50 C2520,90 2880,10 2880,50 L2880,100 L0,100Z"/>
-    </svg>
+
+  <div class="welcome-beach">
+    <div class="welcome-wave2">
+      <svg viewBox="0 0 2880 60" preserveAspectRatio="none" fill="rgba(58,156,191,.25)">
+        <path d="M0,25 C360,55 720,5 1080,35 C1440,55 1800,15 2160,35 C2520,55 2880,5 2880,35 L2880,60 L0,60Z"/>
+      </svg>
+    </div>
+    <div class="welcome-wave">
+      <svg viewBox="0 0 2880 60" preserveAspectRatio="none" fill="rgba(58,156,191,.5)">
+        <path d="M0,30 C360,55 720,10 1080,35 C1440,55 1800,10 2160,35 C2520,55 2880,10 2880,35 L2880,60 L0,60Z"/>
+      </svg>
+    </div>
+    <div class="welcome-sand"></div>
   </div>
 </div>
 
@@ -338,7 +443,7 @@ html,body{height:100%;font-family:var(--font-body);background:var(--charcoal);co
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-      <div class="header-deco">~</div>
+      <div class="header-deco"><i class="fa-solid fa-sun"></i></div>
       <h1>Kaiser Villa Guide</h1>
       <p>Your guide to things to do around the Airbnb</p>
     </div>
@@ -505,32 +610,11 @@ const POIS = [
     img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Kvarner_bay.jpg/600px-Kvarner_bay.jpg' },
 ];
 
-const ROUTES = [
-  {
-    name: 'Route to Stupova Beach',
-    label: '~1.5km walk',
-    points: [[45.163,14.219],[45.159,14.222],[45.155,14.224],[45.153744,14.226576]],
-    color: '#2196F3'
-  },
-  {
-    name: 'Route to Brsec Beach',
-    label: '~4km drive + 1km walk down',
-    points: [[45.163,14.219],[45.168,14.225],[45.175,14.230],[45.180,14.235],[45.1837,14.2443]],
-    color: '#2196F3'
-  },
-  {
-    name: 'Route to Moscenicka Draga',
-    label: '~10km drive, 15 min',
-    points: [[45.163,14.219],[45.175,14.230],[45.190,14.240],[45.210,14.250],[45.225,14.255],[45.237,14.254]],
-    color: '#2196F3'
-  }
-];
-
 const CAT_COLORS = {
-  beach: '#2196F3',
-  restaurant: '#E8713A',
-  hiking: '#4CAF50',
-  attraction: '#9C5EC7'
+  beach: '#42a5c5',
+  restaurant: '#d4845a',
+  hiking: '#6d8c5e',
+  attraction: '#8b6baf'
 };
 
 const CAT_ICONS = {
@@ -625,50 +709,36 @@ POIS.forEach(poi => {
   markerLayers.addLayer(marker);
 });
 
-// ── ROUTES ──
-ROUTES.forEach(route => {
-  const polyline = L.polyline(route.points, {
-    color: route.color,
-    weight: 3.5,
-    opacity: 0.7,
-    dashArray: '8, 10',
-    lineCap: 'round'
-  }).addTo(map);
+// ── DYNAMIC ROUTE LINE ──
+let activeRouteLine = null;
+let activeRouteLabel = null;
 
-  const midIdx = Math.floor(route.points.length / 2);
-  const midPoint = route.points[midIdx];
-  L.marker(midPoint, {
-    icon: L.divIcon({
-      className: '',
-      html: `<div class="route-label"><i class="fa-solid fa-route"></i>&ensp;${route.label}</div>`,
-      iconSize: [200, 30],
-      iconAnchor: [100, 15]
-    }),
-    interactive: false
-  }).addTo(map);
-});
+function showRouteTo(poi) {
+  clearRoute();
+  const color = CAT_COLORS[poi.cat] || '#3a9cbf';
+  activeRouteLine = L.polyline(
+    [[HOME.lat, HOME.lng], [poi.lat, poi.lng]],
+    { color, weight: 3, opacity: 0.8, dashArray: '8, 10', lineCap: 'round' }
+  ).addTo(map);
+  if (poi.distance) {
+    const mid = [(HOME.lat + poi.lat) / 2, (HOME.lng + poi.lng) / 2];
+    activeRouteLabel = L.marker(mid, {
+      icon: L.divIcon({
+        className: '',
+        html: `<div class="route-label"><i class="fa-solid fa-route"></i>&ensp;${poi.distance}</div>`,
+        iconSize: [200, 30], iconAnchor: [100, 15]
+      }),
+      interactive: false
+    }).addTo(map);
+  }
+}
 
-// ── LUNGOMARE PATH ──
-const lungomarePath = [
-  [45.348, 14.319], [45.345, 14.315], [45.340, 14.310],
-  [45.335, 14.306], [45.330, 14.302], [45.325, 14.298],
-  [45.318, 14.292], [45.310, 14.285], [45.305, 14.280],
-  [45.298, 14.275], [45.291, 14.270]
-];
-L.polyline(lungomarePath, {
-  color: '#4CAF50', weight: 3.5, opacity: 0.65,
-  dashArray: '6, 8', lineCap: 'round'
-}).addTo(map);
+function clearRoute() {
+  if (activeRouteLine) { map.removeLayer(activeRouteLine); activeRouteLine = null; }
+  if (activeRouteLabel) { map.removeLayer(activeRouteLabel); activeRouteLabel = null; }
+}
 
-const lungoMid = lungomarePath[Math.floor(lungomarePath.length / 2)];
-L.marker(lungoMid, {
-  icon: L.divIcon({
-    className: '',
-    html: '<div class="route-label" style="border-color:rgba(76,175,80,.3)"><i class="fa-solid fa-shoe-prints" style="color:#4CAF50"></i>&ensp;Lungomare (12km)</div>',
-    iconSize: [160, 30], iconAnchor: [80, 15]
-  }),
-  interactive: false
-}).addTo(map);
+map.on('click', clearRoute);
 
 // ── SIDEBAR LIST ──
 let activeFilter = 'all';
@@ -705,6 +775,7 @@ function renderList(filter) {
 }
 
 function flyToPOI(poi) {
+  showRouteTo(poi);
   map.flyTo([poi.lat, poi.lng], 15, { duration: 1.2 });
   markers[poi.id].openPopup();
 
@@ -719,6 +790,7 @@ function flyToPOI(poi) {
 }
 
 function filterPOIs(cat) {
+  clearRoute();
   activeFilter = cat;
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   document.querySelector(`[data-cat="${cat}"]`).classList.add('active');
@@ -785,10 +857,11 @@ function dismissWelcome() {
   }, 800);
 }
 
-// ── CLICK MARKER -> HIGHLIGHT CARD ──
+// ── CLICK MARKER -> HIGHLIGHT CARD + SHOW ROUTE ──
 Object.values(markers).forEach(marker => {
   marker.on('click', () => {
     const poi = marker.poiData;
+    showRouteTo(poi);
     document.querySelectorAll('.poi-card').forEach(c => c.classList.remove('active-card'));
     const card = document.getElementById(`card-${poi.id}`);
     if (card) {
